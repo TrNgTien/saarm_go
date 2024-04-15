@@ -1,0 +1,48 @@
+volumes
+# Build artifacts
+*.a        # Object files
+*.so        # Shared libraries (dynamically linked)
+*.dylib     # Dynamic libraries (OS X)
+*.dll       # Dynamic libraries (Windows)
+*.exe       # Executables
+*.test      # Test binaries (built with `go test -c`)
+
+# Output files
+*.out       # Generic output files
+*.cov      # Coverage output (e.g., from `go test -coverprofile`)
+
+# Test data (consider a separate directory)
+test_data/*
+
+# IDE/editor specific files
+# Adjust these based on your IDE
+*.swo       # Eclipse workspace files
+*.idea      # IntelliJ IDEA project files
+*.vscode    # Visual Studio Code workspace files
+_vimrc      # Vim configuration file
+
+# Go workspace file
+go.work
+
+# Dependency management (choose one)
+# Remove the commented section you're not using
+# vendor/     # For `go mod vendor` (not recommended)
+# Godeps/     # For `Godeps` (deprecated)
+
+# Temporary/generated files
+tmp/        # Temporary files
+*~         # Swap files
+*.orig     # Backup files
+
+# Logs
+*.log
+
+# Environment files
+.env        # Development environment variables (consider using a `.env.example` for placeholders)
+
+# Credentials
+credentials.json  # Example; adjust the filename for your project
+
+# Specific to your project (add as needed)
+# For example, if you generate sensitive API keys:
+api_keys.json

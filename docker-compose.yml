@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  postgres:
+    image: 'bitnami/postgresql:16'
+    container_name: saarm_go
+    ports:
+      - 5401:5432
+    restart: always
+    environment:
+      - POSTGRESQL_HOST=127.0.0.1
+      - POSTGRESQL_USERNAME=tientran
+      - POSTGRESQL_PASSWORD=tien123@
+      - POSTGRESQL_DATABASE=saarm_db
+    volumes:
+      - ./volumes/:/bitnami/postgresql
+      - /etc/localtime:/etc/localtime:ro
