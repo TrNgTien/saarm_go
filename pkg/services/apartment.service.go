@@ -1,12 +1,12 @@
 package services
 
 import (
-  "saarm/modules/pg"
-  "saarm/pkg/models"
-  "saarm/pkg/repositories"
-  "saarm/pkg/utilities"
+	"saarm/modules/pg"
+	"saarm/pkg/models"
+	"saarm/pkg/repositories"
+	"saarm/pkg/utilities"
 
-  "github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4"
 )
 
 func GetAparments(c echo.Context) error {
