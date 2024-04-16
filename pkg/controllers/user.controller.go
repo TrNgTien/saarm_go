@@ -1,8 +1,6 @@
 package controllers
 
 import (
-  "strconv"
-
   "github.com/labstack/echo/v4"
 
   "saarm/pkg/services"
@@ -15,11 +13,7 @@ func GetUsers (c echo.Context) error {
 
 func GetUserByID (c echo.Context) error {
   id := c.Param("id")
-  i, err := strconv.Atoi(id)
-
-  if err != nil {
-    return utilities.R400(c, "[GetUserByID] Cannot parse to int" )
-  }
+  i := utilities.GetIntValue(id)
 
   rs := services.GetUserByID(i)
 

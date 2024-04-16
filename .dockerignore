@@ -1,0 +1,23 @@
+# Exclude build-time tools and configuration
+vendor/
+
+# Ignore test data or temporary files
+testdata/
+*.log
+
+# Ignore IDE or editor configuration files
+.idea/
+.vscode/
+
+# Exclude version control related files
+.git/
+.gitignore
+
+# Ignore potentially sensitive files
+.env
+
+# Exclude unnecessary files based on your project structure (adjust as needed)
+*.md  # Exclude markdown files if not needed in the image
+build/  # Exclude build artifacts if generated elsewhere
+
+/volumes

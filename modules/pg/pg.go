@@ -1,35 +1,36 @@
 package pg
 
 import (
-  "fmt"
-  "log"
+	"fmt"
+	"log"
+	"os"
 
-  "gorm.io/driver/postgres"
-  "gorm.io/gorm"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
-  "saarm/pkg/models"
+	"saarm/pkg/models"
 )
 
 
 var DB *gorm.DB
 
-var (
-  DBHost = "127.0.0.1"
-  DBPort = "5401"
-  DBUsername = "tientran"
-  DBPassword = "tien123@"
-  DBName = "saarm_db"
-  DBTz = "Asia/Ho_Chi_Minh"
-)
+// const (
+//   DBHost = "postgres"
+//   DBPort = "5400"
+//   DBUsername = "tientran"
+//   DBPassword = "tien123@"
+//   DBName = "saarm_db"
+//   DBTz = "Asia/Ho_Chi_Minh"
+// )
 
 func GetPgConnection() string {
-  database := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s TimeZone=%s sslmode=disable",
-  DBHost,
-  DBPort,
-  DBUsername,
-  DBPassword,
-  DBName,
-  DBTz,
+  database := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+  os.Getenv("APP_ENV_POSTGRESQL_HOST"),
+  os.Getenv("APP_ENV_POSTGRESQL_PORT"),
+  os.Getenv("APP_ENV_POSTGRESQL_USERNAME"),
+  os.Getenv("APP_ENV_POSTGRESQL_PASSWORD"),
+  os.Getenv("APP_ENV_POSTGRESQL_DATABASE"),
 )
 
 
@@ -39,8 +40,12 @@ func GetPgConnection() string {
 
 func InitPg() *gorm.DB {
   var err error
-  connection := GetPgConnection()
-  DB, err = gorm.Open(postgres.Open(connection), &gorm.Config{})
+  pgConn := GetPgConnection()
+  DB, err = gorm.Open(postgres.Open(pgConn), &gorm.Config{
+    Logger: logger.Default.LogMode(logger.Info),
+    QueryFields: true,
+  })
+
   if err != nil {
     log.Panic(err)
   }

@@ -18,5 +18,6 @@ func Init(e *echo.Echo) {
   g := e.Group("/v1/api")
   g.GET("", Ping)
 
+  g.GET("/users", controllers.GetUsers)
   g.GET("/users/:id", controllers.GetUserByID)
 }

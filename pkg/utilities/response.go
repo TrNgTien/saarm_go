@@ -2,9 +2,10 @@ package utilities
 
 import "github.com/labstack/echo/v4"
 
-func R200(c echo.Context) error {
+func R200[T any](c echo.Context, data T) error {
 	return c.JSON(200, echo.Map{
 		"success": true,
+    "data": data,
 	})
 }
 
