@@ -4,6 +4,8 @@ export APP_ENV_POSTGRES_USERNAME=tientran
 export APP_ENV_POSTGRES_PASSWORD=tien123@
 export APP_ENV_POSTGRES_DATABASE=saarm_db
 export APP_ENV_POSTGRES_TZ=Asia/Ho_Chi_Minh
+export APP_ENV_MINIO_SECRET_KEY=minio-secret-key
+export APP_ENV_MINIO_ACCESS_KEY=minio-access-key
 
 server:
 	go run cmd/main.go

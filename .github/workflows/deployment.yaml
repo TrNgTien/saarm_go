@@ -1,0 +1,29 @@
+name: SAARM BE Deployment
+on:
+  push:
+    branches: [develop]
+jobs:
+  deploy_develop:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Deploy SAARM develop start"
+      - name: prepare_source
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.PLACEPAD_IP }}
+          username: root
+          key: ${{ secrets.PLACEPAD_KEY }}
+          script: |
+            echo "Pulling latest source code..."
+            cd saarm_go
+
+            # update latest code
+            git checkout -f main
+            git branch -D develop
+            git fetch -p
+            git checkout develop
+
+            # build project
+            docker restart saarm_go
+
+            echo "DONE"

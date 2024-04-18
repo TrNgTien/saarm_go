@@ -7,6 +7,8 @@ volumes
 *.exe       # Executables
 *.test      # Test binaries (built with `go test -c`)
 
+.DS_Store
+
 # Output files
 *.out       # Generic output files
 *.cov      # Coverage output (e.g., from `go test -coverprofile`)

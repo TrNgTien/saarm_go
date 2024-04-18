@@ -8,14 +8,20 @@ import (
 	"gorm.io/gorm"
 )
 
-type MetaLink struct {
+type Role struct {
 	base.BaseModel
 	Name string `json:"name"`
 }
 
-func (m *MetaLink) BeforeCreate(tx *gorm.DB) (err error) {
+func (m *Role) BeforeCreate(tx *gorm.DB) (err error) {
 	m.ID = uuid.New()
 	m.CreatedAt = time.Now()
 	m.ModifiedAt = time.Now()
 	return
+}
+
+type RoleResponse struct {
+	base.BaseModel
+	LastLoginAt time.Time `json:"lastLoginAt"`
+	Email       string    `json:"email"`
 }

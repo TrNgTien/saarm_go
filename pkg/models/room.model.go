@@ -1,6 +1,7 @@
 package models
 
 import (
+	"saarm/pkg/base"
 	"time"
 
 	"github.com/google/uuid"
@@ -8,16 +9,14 @@ import (
 )
 
 type Room struct {
-	CreatedAt time.Time  `json:"created_at"`
-	ModifiedAt time.Time  `json:"modified_at"`
-	ID   uuid.UUID 	`gorm:"type:uuid;default:uuid_generate_v4()"`
-	Name string    `json:"name"`
-	MonthlyPrice string    `json:"monthly_price"`
+	base.BaseModel
+	Name         string `json:"name"`
+	MonthlyPrice string `json:"monthly_price"`
 }
 
 func (m *Room) BeforeCreate(tx *gorm.DB) (err error) {
-  m.ID = uuid.New()
-  m.CreatedAt = time.Now()
-  m.ModifiedAt = time.Now()
-  return
+	m.ID = uuid.New()
+	m.CreatedAt = time.Now()
+	m.ModifiedAt = time.Now()
+	return
 }
