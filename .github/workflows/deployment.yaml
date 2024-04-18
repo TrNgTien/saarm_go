@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Deploy SAARM develop start"
-      - name: prepare_source
+      - name: deploy_develop
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.PLACEPAD_IP }}
