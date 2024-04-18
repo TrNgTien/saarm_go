@@ -20,11 +20,7 @@ func isExistedUser(user common.UserDTO) bool {
 
 	row.Scan(&count)
 
-	if count > 0 {
-		return true
-	}
-
-	return false
+  return count >0
 }
 
 func SignIn(user common.UserDTO) error {
@@ -41,5 +37,5 @@ func SignUp(c echo.Context, user common.UserDTO) error {
 	}
 
 
-  return utilities.R200(c, "data")
+  return utilities.R200(c, "[SignUp] created success!!")
 }

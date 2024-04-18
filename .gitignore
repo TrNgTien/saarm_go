@@ -41,6 +41,7 @@ tmp/        # Temporary files
 
 # Environment files
 .env        # Development environment variables (consider using a `.env.example` for placeholders)
+.env.prod
 
 # Credentials
 credentials.json  # Example; adjust the filename for your project
