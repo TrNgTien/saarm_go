@@ -2,43 +2,38 @@ package services
 
 import (
 	"context"
-	"fmt"
 	"log"
-	"os"
 
 	vision "cloud.google.com/go/vision/apiv1"
 )
 
-func GetWaterMeter() {
+func GetTextDetection() ([]string, error) {
 	ctx := context.Background()
 
 	// Creates a client.
 	client, err := vision.NewImageAnnotatorClient(ctx)
+
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
 	}
+
 	defer client.Close()
 
-	// Sets the name of the image file to annotate.
-	filename := "../testdata/cat.jpg"
+	IMAGE_URL := "https://i.imgur.com/wRLnsuU.png"
 
-	file, err := os.Open(filename)
-	if err != nil {
-		log.Fatalf("Failed to read file: %v", err)
-	}
-	defer file.Close()
-	image, err := vision.NewImageFromReader(file)
-	if err != nil {
-		log.Fatalf("Failed to create image: %v", err)
-	}
+	image := vision.NewImageFromURI(IMAGE_URL)
 
-	labels, err := client.DetectLabels(ctx, image, nil, 10)
-	if err != nil {
-		log.Fatalf("Failed to detect labels: %v", err)
+	texts, err := client.DetectTexts(ctx, image, nil, 10)
+
+	var rs []string
+
+	for _, text := range texts {
+		rs = append(rs, text.Description)
 	}
 
-	fmt.Println("Labels:")
-	for _, label := range labels {
-		fmt.Println(label.Description)
+	if err != nil {
+		log.Fatalf("Failed to detect texts: %v", err)
 	}
+
+	return rs, nil
 }

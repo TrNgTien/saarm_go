@@ -1,15 +1,11 @@
 package minio
 
 import (
-	"log"
-	"os"
-
-	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/credentials"
+	min "github.com/minio/minio-go"
 )
 
 var (
-	minioClient *minio.Client
+	client *min.Client
 )
 
 func Init() {
@@ -17,23 +13,12 @@ func Init() {
 		err error
 	)
 
-	endpoint := "localhost:9000"
-	accessKeyID := os.Getenv("APP_ENV_MINIO_SECRET_KEY")
-	secretAccessKey := os.Getenv("APP_ENV_MINIO_ACCESS_KEY")
-	useSSL := false
-
-	minioClient, err := minio.New(endpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
-		Secure: useSSL,
-	})
-
+	client, err = min.New("localhost:9000", "minio-root", "tien19217", false)
 	if err != nil {
 		panic(err)
 	}
-
-	log.Printf("%#v\n", minioClient) // minioClient is now setup
 }
 
-func GetClient() *minio.Client {
-	return minioClient
+func GetClient() *min.Client {
+	return client
 }

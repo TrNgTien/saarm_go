@@ -1,8 +1,9 @@
 package routes
 
 import (
-	"github.com/labstack/echo/v4"
 	"net/http"
+
+	"github.com/labstack/echo/v4"
 )
 
 func Ping(c echo.Context) error {
@@ -12,9 +13,13 @@ func Ping(c echo.Context) error {
 func Init(e *echo.Echo) {
 
 	g := e.Group("/v1/api")
-	g.GET("", Ping)
+	g.GET("/ping", Ping)
 
 	AuthGroupRoutes(g)
 
 	UserGroupRoutes(g)
+
+	RoomGroupRoutes(g)
+
+	ConfigGroupRoutes(g)
 }

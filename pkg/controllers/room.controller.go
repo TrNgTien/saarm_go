@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"saarm/pkg/services"
+	"saarm/pkg/utilities"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -32,4 +35,14 @@ func DeleteRoomByID(c echo.Context) error {
 	return c.JSON(200, echo.Map{
 		"success": true,
 	})
+}
+
+func GetWaterMeter(c echo.Context) error {
+	texts, err := services.SubmitWaterMeter()
+
+	if err != nil {
+		return utilities.R400(c, err.Error())
+	}
+
+	return utilities.R200(c, texts)
 }

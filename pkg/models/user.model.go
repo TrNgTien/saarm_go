@@ -10,20 +10,18 @@ import (
 
 type User struct {
 	base.BaseModel
-	LastLoginAt time.Time `json:"last_login_at"`
+	LastLoginAt time.Time `json:"last_login_at" gorm:"default:CURRENT_TIMESTAMP;type:time"`
 	Email       string    `json:"email" gorm:"unique"`
 	Username    string    `json:"username"`
 	Password    string    `json:"password"`
-	Status      string    `json:"status"`
+	Status      string    `json:"status" gorm:"type:string;default:100_ACTIVATED"`
 }
 
 type UserResponse struct {
-	ID          uuid.UUID `json:"id"`
-	CreatedAt   time.Time `json:"createdAt"`
-	ModifiedAt  time.Time `json:"modifiedAt"`
-	LastLoginAt time.Time `json:"lastLoginAt"`
-	Email       string    `json:"email"`
+	Value string `json:"value"`
+	Type  string `json:"type"`
 }
+
 type Users struct {
 	Users []User `json:"users"`
 }

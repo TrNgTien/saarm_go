@@ -1,3 +1,4 @@
+export APP_ENV_SECRET_KEY=secret-key
 export APP_ENV_POSTGRES_HOST=localhost
 export APP_ENV_POSTGRES_PORT=5400
 export APP_ENV_POSTGRES_USERNAME=tientran
