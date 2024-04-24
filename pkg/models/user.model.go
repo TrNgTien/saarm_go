@@ -11,8 +11,8 @@ import (
 type User struct {
 	base.BaseModel
 	LastLoginAt time.Time `json:"last_login_at" gorm:"default:CURRENT_TIMESTAMP;type:time"`
-	Email       string    `json:"email" gorm:"unique"`
-	Username    string    `json:"username"`
+	Email       string    `json:"email"`
+	Username    string    `json:"username" gorm:"unique"`
 	Password    string    `json:"password"`
 	Status      string    `json:"status" gorm:"type:string;default:100_ACTIVATED"`
 }

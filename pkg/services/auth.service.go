@@ -36,34 +36,38 @@ func comparePassword(reqPass string, hashedPass string) bool {
 
 }
 
+type UserData struct {
+	Id          uuid.UUID
+	Password    string
+	Username    string
+	Email       string
+	LastLoginAt time.Time
+}
+
 func SignIn(user common.UserDTO) (models.UserResponse, error) {
-	var id uuid.UUID
-	var password string
-	var username string
-	var email string
-	var lastLoginAt time.Time
+	var userData UserData
 
 	if user.Username == "" {
 		return models.UserResponse{}, errors.New("[SignIn] Username cannot be empty")
 	}
 
-	row := pg.DB.Raw("select id, username, email, password, last_login_at from users where username = ?", user.Username).Row()
+	pg.DB.Raw("SELECT id, username, email, password, last_login_at FROM users WHERE username = ? LIMIT 1", user.Username).Scan(&userData)
 
-	row.Scan(&id, &username, &email, &password, &lastLoginAt)
+	fmt.Println("[SignIn]", userData)
 
-	if username == "" {
+	if userData.Username == "" {
 		return models.UserResponse{}, errors.New("[SignIn] Error fetching user")
 	}
 
-	isMatchPass := comparePassword(user.Password, password)
+	isMatchPass := comparePassword(user.Password, userData.Password)
 
 	if !isMatchPass {
 		return models.UserResponse{}, errors.New("[SignIn] Incorrect password")
 	}
 
-	pg.DB.Exec("UPDATE users SET last_login_at = ? WHERE id = ?", time.Now(), id).Row()
+	pg.DB.Exec("UPDATE users SET last_login_at = ? WHERE id = ?", time.Now(), userData.Id).Row()
 
-	token, err := helpers.GenerateToken(id)
+	token, err := helpers.GenerateToken(userData.Id)
 
 	if err != nil {
 

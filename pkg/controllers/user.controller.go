@@ -13,12 +13,14 @@ func GetUsers(c echo.Context) error {
 
 func GetUserByID(c echo.Context) error {
 	id := c.Param("id")
-	i := utilities.GetIntValue(id)
+	i, err := utilities.GetIntValue(id)
+	if err != nil {
+
+		return utilities.R400(c, err.Error())
+
+	}
 
 	rs := services.GetUserByID(i)
 
-	return c.JSON(200, echo.Map{
-		"success": true,
-		"data":    rs,
-	})
+	return utilities.R200(c, rs)
 }

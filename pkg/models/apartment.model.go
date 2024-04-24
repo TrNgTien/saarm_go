@@ -21,9 +21,8 @@ func (m *Apartment) BeforeCreate(tx *gorm.DB) (err error) {
 }
 
 type AparmentResponse struct {
-	ID          uuid.UUID `json:"id"`
-	CreatedAt   time.Time `json:"createdAt"`
-	ModifiedAt  time.Time `json:"modifiedAt"`
-	LastLoginAt time.Time `json:"lastLoginAt"`
-	Email       string    `json:"email"`
+	ID         uuid.UUID `json:"id"`
+	CreatedAt  time.Time `json:"createdAt"`
+	ModifiedAt time.Time `json:"modifiedAt"`
+	Name       string    `json:"email"`
 }

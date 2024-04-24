@@ -1,6 +1,6 @@
 package services
 
-func SubmitWaterMeter() ([]string, error) {
+func SubmitWaterMeter() ([]int, error) {
 	texts, err := GetTextDetection()
 
 	if err != nil {

@@ -3,11 +3,12 @@ package services
 import (
 	"context"
 	"log"
+	"saarm/pkg/utilities"
 
 	vision "cloud.google.com/go/vision/apiv1"
 )
 
-func GetTextDetection() ([]string, error) {
+func GetTextDetection() ([]int, error) {
 	ctx := context.Background()
 
 	// Creates a client.
@@ -25,10 +26,17 @@ func GetTextDetection() ([]string, error) {
 
 	texts, err := client.DetectTexts(ctx, image, nil, 10)
 
-	var rs []string
+	var rs []int
 
 	for _, text := range texts {
-		rs = append(rs, text.Description)
+		v, err := utilities.GetIntValue(text.Description)
+
+		if err != nil {
+
+			continue
+		}
+
+		rs = append(rs, v)
 	}
 
 	if err != nil {

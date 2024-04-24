@@ -19,12 +19,19 @@ type Config struct {
 
 var env Config
 
-func Init() {
+func Init() error {
+	port, err := utilities.GetIntValue(os.Getenv("APP_ENV_POSTGRES_PORT"))
+
+	if err != nil {
+		return err
+	}
+
 	env.DB.PG.Host = os.Getenv("APP_ENV_POSTGRES_HOST")
-	env.DB.PG.Port = utilities.GetIntValue(os.Getenv("APP_ENV_POSTGRES_PORT"))
+	env.DB.PG.Port = port
 	env.DB.PG.Username = os.Getenv("APP_ENV_POSTGRES_USERNAME")
 	env.DB.PG.Password = os.Getenv("APP_ENV_POSTGRES_PASSWORD")
 	env.DB.PG.Database = os.Getenv("APP_ENV_POSTGRES_DATABASE")
+	return nil
 }
 
 func GetENV() Config {

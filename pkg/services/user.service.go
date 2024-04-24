@@ -13,10 +13,27 @@ import (
 func GetUsers(c echo.Context) error {
 	limit, offset, page := c.QueryParam("limit"), c.QueryParam("offset"), c.QueryParam("page")
 
+	limitInt, err := utilities.GetIntValue(limit)
+
+	if err != nil {
+		return err
+	}
+
+	offsetInt, err := utilities.GetIntValue(offset)
+
+	if err != nil {
+		return err
+	}
+
+	pageInt, err := utilities.GetIntValue(page)
+
+	if err != nil {
+		return err
+	}
 	users := repositories.UserRepo(pg.DB).FindAllUsers(common.PaginationQuery{
-		Limit:  utilities.GetIntValue(limit),
-		Offset: utilities.GetIntValue(offset),
-		Page:   utilities.GetIntValue(page),
+		Limit:  limitInt,
+		Offset: offsetInt,
+		Page:   pageInt,
 	})
 
 	return utilities.R200(c, users)
