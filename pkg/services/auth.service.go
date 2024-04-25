@@ -5,96 +5,77 @@ import (
 	"fmt"
 	"saarm/modules/pg"
 	"saarm/pkg/common"
+	"saarm/pkg/dto"
 	"saarm/pkg/helpers"
+	"saarm/pkg/models"
+	modelRequests "saarm/pkg/models/request"
+	modelReponses "saarm/pkg/models/response"
 	"time"
 
-	"saarm/pkg/models"
-
-	"github.com/google/uuid"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
 
-type SignUpResponse struct {
-	id       uuid.UUID
-	email    string
-	username string
-}
-
-func IsExistedUser(user common.UserDTO) bool {
+func IsExistedUser(user modelRequests.SignUpRequest) bool {
 	var count int
-	row := pg.DB.Raw("select count(*) from users where username = ?", user.Username).Row()
-
-	row.Scan(&count)
+	pg.DB.Raw("select count(*) from users where username = ?", user.Username).Scan(&count)
 
 	return count > 0
 }
 
 func comparePassword(reqPass string, hashedPass string) bool {
-
 	return helpers.ValidatePassword(reqPass, hashedPass)
-
 }
 
-type UserData struct {
-	Id          uuid.UUID
-	Password    string
-	Username    string
-	Email       string
-	LastLoginAt time.Time
-}
-
-func SignIn(user common.UserDTO) (models.UserResponse, error) {
-	var userData UserData
+func SignIn(user modelRequests.SignInRequest) (modelReponses.AuthResponse, error) {
+	var userData dto.UserData
 
 	if user.Username == "" {
-		return models.UserResponse{}, errors.New("[SignIn] Username cannot be empty")
+		return modelReponses.AuthResponse{}, errors.New("[SignIn] Username cannot be empty")
 	}
 
-	pg.DB.Raw("SELECT id, username, email, password, last_login_at FROM users WHERE username = ? LIMIT 1", user.Username).Scan(&userData)
-
-	fmt.Println("[SignIn]", userData)
+	pg.DB.Raw("SELECT id, username, password, last_login_at FROM users WHERE username = ?", user.Username).Scan(&userData)
 
 	if userData.Username == "" {
-		return models.UserResponse{}, errors.New("[SignIn] Error fetching user")
+		return modelReponses.AuthResponse{}, errors.New("[SignIn] Error fetching user")
 	}
 
 	isMatchPass := comparePassword(user.Password, userData.Password)
 
 	if !isMatchPass {
-		return models.UserResponse{}, errors.New("[SignIn] Incorrect password")
+		return modelReponses.AuthResponse{}, errors.New("[SignIn] Incorrect password")
 	}
 
-	pg.DB.Exec("UPDATE users SET last_login_at = ? WHERE id = ?", time.Now(), userData.Id).Row()
+	pg.DB.Exec("UPDATE users SET last_login_at = ? WHERE id = ?", time.Now(), userData.ID)
 
-	token, err := helpers.GenerateToken(userData.Id)
+	token, err := helpers.GenerateToken(userData.ID)
 
 	if err != nil {
 
-		return models.UserResponse{}, err
+		return modelReponses.AuthResponse{}, err
 	}
 
-	return models.UserResponse{Type: "Bearer", Value: token}, nil
+	return modelReponses.AuthResponse{Type: common.JwtBearer, Value: token, LastLoginAt: userData.LastLoginAt}, nil
 }
 
-func SignUp(user common.UserDTO) (models.UserResponse, error) {
+func SignUp(user modelRequests.SignUpRequest) (modelReponses.AuthResponse, error) {
 
 	newUser := models.User{Email: user.Email, Password: helpers.HashPassword(user.Password), Username: user.Username}
 
 	err := pg.DB.Create(&newUser).Error
 
 	if err != nil {
-		return models.UserResponse{}, errors.New(err.Error())
+		return modelReponses.AuthResponse{}, errors.New(err.Error())
 	}
 
 	token, err := helpers.GenerateToken(newUser.ID)
 
 	if err != nil {
 
-		return models.UserResponse{}, err
+		return modelReponses.AuthResponse{}, err
 	}
 
-	return models.UserResponse{Type: "Bearer", Value: token}, nil
+  return modelReponses.AuthResponse{Type: common.JwtBearer, Value: token, LastLoginAt: newUser.LastLoginAt}, nil
 }
 
 func SignUpWithGoogle() {

@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"os"
-	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
@@ -10,9 +9,9 @@ import (
 
 func GenerateToken(userID uuid.UUID) (string, error) {
 	claims := jwt.MapClaims{
-		"exp":    time.Now().Add(time.Hour * 24).Unix(), // Set expiry time (1 day)
-		"iat":    time.Now().Unix(),                     // Issued at
-		"userID": userID,                                // User ID
+		"exp":    GetOneDay(),
+		"iat":    GetCurrentTime(),
+		"userID": userID,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

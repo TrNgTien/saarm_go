@@ -10,7 +10,12 @@ import (
 
 type Apartment struct {
 	base.BaseModel
-	Name string `json:"name"`
+	Name          string `json:"name"`
+	LocationUrl   string `json:"locationUrl"`
+	Address       string `json:"address"`
+	TotalRoom     int16  `json:"totalRoom"`
+	RoomAvailable int16  `json:"roomAvailable"`
+	Status        string `json:"status" gorm:"type:string;default:100_ACTIVATED"`
 }
 
 func (m *Apartment) BeforeCreate(tx *gorm.DB) (err error) {
@@ -20,9 +25,3 @@ func (m *Apartment) BeforeCreate(tx *gorm.DB) (err error) {
 	return
 }
 
-type AparmentResponse struct {
-	ID         uuid.UUID `json:"id"`
-	CreatedAt  time.Time `json:"createdAt"`
-	ModifiedAt time.Time `json:"modifiedAt"`
-	Name       string    `json:"email"`
-}

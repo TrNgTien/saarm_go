@@ -16,10 +16,8 @@ func Init(e *echo.Echo) {
 	g.GET("/ping", Ping)
 
 	AuthGroupRoutes(g)
-
 	UserGroupRoutes(g)
-
 	RoomGroupRoutes(g)
-
 	ConfigGroupRoutes(g)
+	ApartmentRoutes(g)
 }

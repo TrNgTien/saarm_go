@@ -2,43 +2,22 @@ package controllers
 
 import (
 	"fmt"
+	modelRequests "saarm/pkg/models/request"
 	"saarm/pkg/services"
 	"saarm/pkg/utilities"
-
-	"saarm/pkg/common"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 )
 
-type User struct {
-	Username string `json:"username" form:"username"`
-	Password string `json:"password" form:"password"`
-	Email    string `json:"email" form:"email"`
-}
-
-// const (
-// 	clientID     = "YOUR_CLIENT_ID"     // Replace with your actual client ID
-// 	clientSecret = "YOUR_CLIENT_SECRET" // Replace with your actual client secret
-// 	redirectURI  = "postmessage"
-// 	grantType    = "authorization_code"
-// )
-
-// type TokenResponse struct {
-// 	AccessToken  string `json:"access_token"`
-// 	RefreshToken string `json:"refresh_token"`
-// 	// Add other relevant fields from the response here
-// }
-
-
 func SignIn(c echo.Context) error {
-	u := new(User)
+	u := new(modelRequests.SignInRequest)
 
 	if err := c.Bind(u); err != nil {
 		return echo.ErrBadRequest
 	}
 
-	user := common.UserDTO{
+	user := modelRequests.SignInRequest{
 		Username: u.Username,
 		Password: u.Password,
 	}
@@ -53,15 +32,16 @@ func SignIn(c echo.Context) error {
 }
 
 func SignUp(c echo.Context) error {
-	u := new(User)
+	u := new(modelRequests.NewUser)
 	if err := c.Bind(u); err != nil {
-		return utilities.R400(c, "err")
+		return utilities.R400(c, err.Error())
 	}
 
-	user := common.UserDTO{
-		Username: u.Username,
-		Password: u.Password,
-		Email:    u.Email,
+	user := modelRequests.SignUpRequest{
+		Username:    u.Username,
+		Password:    u.Password,
+		Email:       u.Email,
+		ApartmentID: u.ApartmentID,
 	}
 
 	if user.Username == "" || user.Password == "" || user.Email == "" {
@@ -69,6 +49,7 @@ func SignUp(c echo.Context) error {
 	}
 
 	if services.IsExistedUser(user) {
+		fmt.Println("runn")
 		log.Error("[SignUp] | User has already exsited!")
 		return utilities.R400(c, "[SignUp] | User has already exsited!")
 	}
