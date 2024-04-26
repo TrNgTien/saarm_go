@@ -11,5 +11,5 @@ func RoomGroupRoutes(g *echo.Group) {
 
   // roomGroup.POST("/:id", controllers.GetWaterMeter)
   // roomGroup.GET("/:id/bills", controllers.GetWaterMeter)
-  roomGroup.GET("/", controllers.GetWaterMeter)
+  roomGroup.POST("", controllers.GetWaterMeter)
 }
