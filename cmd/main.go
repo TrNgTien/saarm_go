@@ -18,6 +18,7 @@ func main() {
 	}))
 
 	e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {}))
+
 	e.Use(middleware.SecureWithConfig(middleware.SecureConfig{
 		XSSProtection:         "",
 		ContentTypeNosniff:    "",
@@ -25,14 +26,16 @@ func main() {
 		HSTSMaxAge:            3600,
 		ContentSecurityPolicy: "default-src 'self'",
 	}))
+
 	e.Use(middleware.Gzip())
+
 	e.Use(middleware.Recover())
+
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
 		AllowCredentials: false,
 	}))
-
 
 	server.Bootstrap(e)
 

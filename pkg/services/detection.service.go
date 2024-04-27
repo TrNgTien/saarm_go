@@ -9,9 +9,9 @@ import (
 	vision "cloud.google.com/go/vision/apiv1"
 )
 
-func GetTextDetection() ([]int, error) {
-	ctx := context.Background()
+func GetTextDetection(filePath string) ([]int, error) {
 	var rs []int
+	ctx := context.Background()
 
 	// Creates a client.
 	client, err := vision.NewImageAnnotatorClient(ctx)
@@ -23,7 +23,7 @@ func GetTextDetection() ([]int, error) {
 
 	defer client.Close()
 
-	IMAGE_WATER_METER_PATH := utilities.GetFilePath("assets/water-meter/crop.png")
+	IMAGE_WATER_METER_PATH := utilities.GetFilePath(filePath)
 
 	file, err := os.Open(IMAGE_WATER_METER_PATH)
 

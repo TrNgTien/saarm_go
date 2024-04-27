@@ -12,3 +12,7 @@ const (
 )
 
 var FixedAllowedRoles = [2]string{"superadmin", "admin"}
+
+const (
+	WATER_METER_PATH = "assets/water-meter/"
+)

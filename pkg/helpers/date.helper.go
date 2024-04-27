@@ -1,6 +1,9 @@
 package helpers
 
-import "time"
+import (
+	"strconv"
+	"time"
+)
 
 func GetOneDay() int64 {
 	return time.Now().Add(time.Hour * 24).Unix()
@@ -8,4 +11,8 @@ func GetOneDay() int64 {
 
 func GetCurrentTime() int64 {
 	return time.Now().Unix()
+}
+
+func GetCurrentTimestampString() string {
+	return strconv.FormatInt(time.Now().UnixNano(), 10)
 }

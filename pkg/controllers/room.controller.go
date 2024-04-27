@@ -38,7 +38,13 @@ func DeleteRoomByID(c echo.Context) error {
 }
 
 func GetWaterMeter(c echo.Context) error {
-	texts, err := services.SubmitWaterMeter()
+	file, err := c.FormFile("file")
+
+	if err != nil {
+		return err
+	}
+
+	texts, err := services.SubmitWaterMeter(file)
 
 	if err != nil {
 		return utilities.R400(c, err.Error())

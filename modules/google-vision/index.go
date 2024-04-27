@@ -1,6 +1,0 @@
-package googlevision
-
-
-func Init() {
-
-}

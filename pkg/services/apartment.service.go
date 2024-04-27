@@ -69,7 +69,7 @@ func GetApartments(query common.PaginationQuery) ([]modelReponses.AparmentRespon
 		err := rows.Scan(&apartment.ID, &apartment.Name, &apartment.LocationUrl, &apartment.Address, &apartment.TotalRoom, &apartment.RoomAvailable)
 
 		if err != nil {
-			return nil, err // Propagate errors from Scan
+			return nil, err
 		}
 
 		apartments = append(apartments, apartment)
