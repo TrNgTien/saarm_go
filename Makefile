@@ -1,5 +1,5 @@
 export APP_ENV_SECRET_KEY=secret-key
-export APP_ENV_POSTGRES_HOST=localhost
+export APP_ENV_POSTGRESQL_HOST=local_home
 export APP_ENV_POSTGRES_PORT=5400
 export APP_ENV_POSTGRES_USERNAME=tientran
 export APP_ENV_POSTGRES_PASSWORD=tien123@

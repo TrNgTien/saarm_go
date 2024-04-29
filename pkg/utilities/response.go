@@ -25,6 +25,6 @@ func R400(c echo.Context, msg string) error {
 func R500(c echo.Context, msg string) error {
 	return c.JSON(500, echo.Map{
 		"success": false,
-		"message": "Internal server error",
+		"message": msg,
 	})
 }
