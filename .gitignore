@@ -50,4 +50,4 @@ credentials.json  # Example; adjust the filename for your project
 # For example, if you generate sensitive API keys:
 api_keys.json
 
-./assets/water-meter-img/*
+assets/*

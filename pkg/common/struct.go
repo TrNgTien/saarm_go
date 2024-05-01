@@ -5,3 +5,7 @@ type PaginationQuery struct {
 	Offset int
 	Page   int
 }
+
+type UploadWaterMeter struct {
+	File string `json:"file"`
+}

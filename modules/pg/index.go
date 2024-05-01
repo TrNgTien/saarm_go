@@ -17,7 +17,7 @@ var DB *gorm.DB
 
 func GetPgConnection() string {
 	database := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		utilities.GetValueOrDefault(os.Getenv("APP_ENV_POSTGRESQL_HOST"), "local_home"),
+		utilities.GetValueOrDefault(os.Getenv("APP_ENV_POSTGRESQL_HOST"), "localhost"),
 		utilities.GetValueOrDefault(os.Getenv("APP_ENV_POSTGRESQL_PORT"), "5400"),
 		utilities.GetValueOrDefault(os.Getenv("APP_ENV_POSTGRESQL_USERNAME"), "tientran"),
 		utilities.GetValueOrDefault(os.Getenv("APP_ENV_POSTGRESQL_PASSWORD"), "tien123@"),
