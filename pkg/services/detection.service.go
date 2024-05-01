@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"saarm/pkg/utilities"
@@ -9,8 +10,8 @@ import (
 	vision "cloud.google.com/go/vision/apiv1"
 )
 
-func GetTextDetection(filePath string) ([]int, error) {
-	var rs []int
+func GetTextDetection(fileDir, fileName string) ([]string, error) {
+	var rs []string
 	ctx := context.Background()
 
 	// Creates a client.
@@ -23,12 +24,14 @@ func GetTextDetection(filePath string) ([]int, error) {
 
 	defer client.Close()
 
-	IMAGE_WATER_METER_PATH := utilities.GetFilePath(filePath)
+	IMAGE_WATER_METER_PATH := utilities.GetFilePath(fileDir, fileName)
+
+	fmt.Println("[utilities][GetTextDetection] | open image created!")
 
 	file, err := os.Open(IMAGE_WATER_METER_PATH)
 
 	if err != nil {
-		log.Fatalf("Failed to read file: %v", err)
+		log.Fatalf("[utilities][GetTextDetection] | Failed to read file: %v", err)
 		return rs, err
 	}
 
@@ -44,13 +47,13 @@ func GetTextDetection(filePath string) ([]int, error) {
 	texts, err := client.DetectTexts(ctx, image, nil, 10)
 
 	for _, text := range texts {
-		v, err := utilities.GetIntValue(text.Description)
+		_, err := utilities.GetIntValue(text.Description)
 
 		if err != nil {
 			continue
 		}
 
-		rs = append(rs, v)
+		rs = append(rs, text.Description)
 	}
 
 	if err != nil {

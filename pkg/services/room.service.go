@@ -3,8 +3,6 @@ package services
 import (
 	"encoding/base64"
 	"fmt"
-	"io"
-	"mime/multipart"
 	"os"
 	"saarm/pkg/common"
 	"saarm/pkg/helpers"
@@ -12,79 +10,70 @@ import (
 	"strings"
 )
 
-func StoreWaterMeterFile(file common.UploadWaterMeter, roomID string) error {
+func storeWaterMeterFile(file common.UploadWaterMeter, roomID string) (string, error) {
 	baseData := file.File[strings.IndexByte(file.File, ',')+1:]
+	var outputFileName string
 
 	decodedBase64, err := base64.StdEncoding.DecodeString(baseData)
 
 	if err != nil {
-		return err
+		return outputFileName, err
 	}
 
 	parts := strings.SplitN(file.File, ";", 2)
 	var fileType string
 
 	if len(parts) != 2 {
-		return err
+		return outputFileName, err
 	}
 
 	mimeType := parts[0]
 	fileType = strings.Split(mimeType, "/")[1]
 
 	timestamp := helpers.GetCurrentTimestampString()
-	outputFileName := "room-" + roomID + "-" + timestamp + "." + fileType
+	outputFileName = "room-" + roomID + "-" + timestamp + "." + fileType
 
-	f, err := os.Create(utilities.GetFilePath(common.WATER_METER_PATH + outputFileName))
+	pathData := utilities.GetFilePath(common.WATER_METER_PATH, outputFileName)
+
+	f, err := os.Create(pathData)
 
 	if err != nil {
-		return err
+		return outputFileName, err
 	}
 
 	defer f.Close()
 
 	if _, err := f.Write(decodedBase64); err != nil {
-		return err
+		return outputFileName, err
 	}
 
 	if err := f.Sync(); err != nil {
-		return err
+		return outputFileName, err
 	}
 
-	return nil
+	fmt.Println("[storeWaterMeterFile] | Created system file")
+
+	return outputFileName, nil
 }
 
-func SubmitWaterMeter(file *multipart.FileHeader) ([]int, error) {
-	var numbersDetected []int
-	src, err := file.Open()
+func SubmitWaterMeter(file common.UploadWaterMeter, roomID string) ([]string, error) {
+	var numbersDetected []string
+
+	fileSubmited, err := storeWaterMeterFile(file, roomID)
 
 	if err != nil {
 		return numbersDetected, err
 	}
 
-	defer src.Close()
+	fmt.Println("SubmitWaterMeter [PATH] : ", common.WATER_METER_PATH, fileSubmited)
 
-	fileUploadedExtension := strings.Split(file.Filename, ".")[1]
+	fmt.Println("RUNNING detect water meter")
+	numbersDetected, err = GetTextDetection(common.WATER_METER_PATH, fileSubmited)
 
-	timestamp := helpers.GetCurrentTimestampString()
-	outputFileName := "room_1_" + timestamp + "." + fileUploadedExtension
-
-	fmt.Println("DEBUG", utilities.GetFilePath(common.WATER_METER_PATH+outputFileName))
-	dst, err := os.Create(utilities.GetFilePath(common.WATER_METER_PATH + outputFileName))
 	if err != nil {
+		fmt.Println("RUNNING detect water meter failed: ", err.Error())
 		return numbersDetected, err
 	}
 
-	defer dst.Close()
-
-	// Copy
-	if _, err = io.Copy(dst, src); err != nil {
-		return numbersDetected, err
-	}
-	texts, err := GetTextDetection(common.WATER_METER_PATH + outputFileName)
-
-	if err != nil {
-		return texts, err
-	}
-
-	return texts, nil
+	return numbersDetected, nil
 }

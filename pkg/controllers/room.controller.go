@@ -46,17 +46,11 @@ func GetWaterMeter(c echo.Context) error {
 		return utilities.R400(c, err.Error())
 	}
 
-	err := services.StoreWaterMeterFile(*file, roomID)
+	numberDetected, err := services.SubmitWaterMeter(*file, roomID)
 
 	if err != nil {
-		return utilities.R500(c, err.Error())
+		return utilities.R400(c, err.Error())
 	}
 
-	// texts, err := services.SubmitWaterMeter(file)
-
-	// if err != nil {
-	// 	return utilities.R400(c, err.Error())
-	// }
-
-	return utilities.R200(c, "data")
+	return utilities.R200(c, numberDetected)
 }
