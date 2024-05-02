@@ -35,8 +35,10 @@ func removeContents(path, excludePattern string) error {
 
 			return os.RemoveAll(path)
 		}
+
 		return nil
 	})
+
 	return err
 }
 
@@ -49,7 +51,7 @@ func RemoveAllAssets() error {
 
 	p := filepath.Join(dir, common.WATER_METER_PATH)
 
-  excludePattern := ".keep"
+	excludePattern := ".keep"
 
 	if err := removeContents(p, excludePattern); err != nil {
 		return err
