@@ -7,13 +7,13 @@ import (
 )
 
 func ConfigGroupRoutes(g *echo.Group) {
-	configGroup := g.Group("/config")
+	configGroup := g.Group("/configs/")
 
-	configGroup.GET("/minio/buckets", controllers.GetBuckets)
+	configGroup.GET("minio/buckets", controllers.GetBuckets)
 
-	configGroup.POST("/minio/buckets", controllers.CreateBucket)
+	configGroup.POST("minio/buckets", controllers.CreateBucket)
 
-	configGroup.DELETE("/minio/buckets", controllers.DeleteBucket)
+	configGroup.DELETE("minio/buckets", controllers.DeleteBucket)
 
-  configGroup.POST("/minio/buckets/:name", controllers.UploadObject)
+  configGroup.POST("minio/buckets/:name", controllers.UploadObject)
 }

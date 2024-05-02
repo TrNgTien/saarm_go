@@ -16,3 +16,9 @@ var FixedAllowedRoles = [2]string{"superadmin", "admin"}
 const (
 	WATER_METER_PATH = "assets/water-meter/"
 )
+
+const (
+	MINIO_BUCKET_ORIGINAL = "original-images"
+	MINIO_BUCKET_CROPPED  = "cropped-images"
+	MINIO_BUCKET_FILE     = "files"
+)

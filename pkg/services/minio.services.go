@@ -2,7 +2,7 @@ package services
 
 import (
 	"fmt"
-	"io"
+	"log"
 	"math/rand"
 	"path/filepath"
 	"saarm/modules/minio"
@@ -69,19 +69,16 @@ func DeleteBucket(bucketName string) (err error) {
 	return nil
 }
 
-func UploadObject(bucketName string, objectName string, object io.Reader, size int64) error {
+func UploadObject(bucketName string, objectName string, filePath string) (int64, error) {
 
-	// Get file extension for content type
-	// ext := getFileExtension(file.Filename)
-	// contentType := "application/multipart"
-	// Create a unique object name to avoid conflicts
-	// objectName := fmt.Sprintf("images/%s.%s", generateRandomString(10), ext)
+	contentType := "application/octet-stream"
 
-	// _, err := minio.GetClient().PutObject(bucketName, objectName, object, size, minio.PutObjectOptions{ContentType: contentType})
+	info, err := minio.GetClient().FPutObject(bucketName, objectName, filePath, min.PutObjectOptions{ContentType: contentType})
 
-	// if err != nil {
-	// return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Error uploading image to Minio: %v", err))
-	// }
+	if err != nil {
+		return info, err
+	}
 
-	return nil
+	log.Printf("Successfully uploaded %s of size %d\n", objectName, info)
+	return info, nil
 }

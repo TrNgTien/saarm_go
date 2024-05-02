@@ -10,8 +10,8 @@ import (
 	"strings"
 )
 
-func storeWaterMeterFile(file common.UploadWaterMeter, roomID string) (string, error) {
-	baseData := file.File[strings.IndexByte(file.File, ',')+1:]
+func saveFileSystem(file, roomID string) (string, error) {
+	baseData := file[strings.IndexByte(file, ',')+1:]
 	var outputFileName string
 
 	decodedBase64, err := base64.StdEncoding.DecodeString(baseData)
@@ -20,7 +20,7 @@ func storeWaterMeterFile(file common.UploadWaterMeter, roomID string) (string, e
 		return outputFileName, err
 	}
 
-	parts := strings.SplitN(file.File, ";", 2)
+	parts := strings.SplitN(file, ";", 2)
 	var fileType string
 
 	if len(parts) != 2 {
@@ -59,16 +59,38 @@ func storeWaterMeterFile(file common.UploadWaterMeter, roomID string) (string, e
 func SubmitWaterMeter(file common.UploadWaterMeter, roomID string) ([]string, error) {
 	var numbersDetected []string
 
-	fileSubmited, err := storeWaterMeterFile(file, roomID)
+	fileCropped, err := saveFileSystem(file.CroppedFile, roomID)
 
 	if err != nil {
 		return numbersDetected, err
 	}
 
-	fmt.Println("SubmitWaterMeter [PATH] : ", common.WATER_METER_PATH, fileSubmited)
+	fileOriginal, err := saveFileSystem(file.OriginalFile, roomID)
 
-	fmt.Println("RUNNING detect water meter")
-	numbersDetected, err = GetTextDetection(common.WATER_METER_PATH, fileSubmited)
+	if err != nil {
+		return numbersDetected, err
+	}
+
+	IMAGE_WATER_METER_PATH := utilities.GetFilePath(common.WATER_METER_PATH, fileCropped)
+	ORIGINAL_WATER_METER_PATH := utilities.GetFilePath(common.WATER_METER_PATH, fileOriginal)
+
+	info, err := UploadObject(common.MINIO_BUCKET_CROPPED, fileCropped, IMAGE_WATER_METER_PATH)
+
+	if err != nil {
+		fmt.Println("Failed to upload images", err.Error())
+		return numbersDetected, err
+	}
+
+	infoOriginal, err := UploadObject(common.MINIO_BUCKET_ORIGINAL, fileOriginal, ORIGINAL_WATER_METER_PATH)
+
+	if err != nil {
+		fmt.Println("Failed to upload images", err.Error())
+		return numbersDetected, err
+	}
+
+	fmt.Println("Upload image cropped, originalFile success", info, infoOriginal)
+
+	numbersDetected, err = GetTextDetection(common.WATER_METER_PATH, fileCropped)
 
 	if err != nil {
 		fmt.Println("RUNNING detect water meter failed: ", err.Error())

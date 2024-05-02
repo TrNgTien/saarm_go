@@ -7,5 +7,6 @@ type PaginationQuery struct {
 }
 
 type UploadWaterMeter struct {
-	File string `json:"file"`
+	CroppedFile string `json:"croppedFile"`
+	OriginalFile string `json:"originalFile"`
 }
