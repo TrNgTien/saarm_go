@@ -20,6 +20,7 @@ func Init() {
 		utilities.GetValueEnv(os.Getenv("APP_ENV_MINIO_ACCESS_KEY"), "minio-root"),
 		utilities.GetValueEnv(os.Getenv("APP_ENV_MINIO_SECRET_KEY"), "tien19217"),
 		false)
+
 	if err != nil {
 		panic(err)
 	}
