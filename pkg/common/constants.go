@@ -22,3 +22,12 @@ const (
 	MINIO_BUCKET_CROPPED  = "cropped-images"
 	MINIO_BUCKET_FILE     = "files"
 )
+
+const (
+  USER_PATH ="/users/"
+  AUTH_PATH ="/auth/"
+  ROOM_PATH ="/rooms/"
+  APARTMENT_ACCOUNT_PATH ="/accounts/"
+  APARTMENT_PATH ="/apartments/"
+  CONFIG_PATH ="/configs/"
+)

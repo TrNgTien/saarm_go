@@ -24,3 +24,12 @@ func GetUserByID(c echo.Context) error {
 
 	return utilities.R200(c, rs)
 }
+
+
+func CreateUser(c echo.Context) error {
+	return utilities.R200(c, "rs")
+}
+
+func UpdateUser(c echo.Context) error {
+	return utilities.R200(c, "rs")
+}

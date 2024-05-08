@@ -1,19 +1,18 @@
 package routes
 
 import (
+	"saarm/pkg/common"
 	"saarm/pkg/controllers"
 
 	"github.com/labstack/echo/v4"
 )
 
 func ConfigGroupRoutes(g *echo.Group) {
-	configGroup := g.Group("/configs/")
+	configGroup := g.Group(common.CONFIG_PATH)
+	minioBucketPath := "minio/buckets"
 
-	configGroup.GET("minio/buckets", controllers.GetBuckets)
-
-	configGroup.POST("minio/buckets", controllers.CreateBucket)
-
-	configGroup.DELETE("minio/buckets", controllers.DeleteBucket)
-
-  configGroup.POST("minio/buckets/:name", controllers.UploadObject)
+	configGroup.GET(minioBucketPath, controllers.GetBuckets)
+	configGroup.POST(minioBucketPath, controllers.CreateBucket)
+	configGroup.DELETE(minioBucketPath, controllers.DeleteBucket)
+	configGroup.POST(minioBucketPath+"/:name", controllers.UploadObject)
 }

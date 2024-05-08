@@ -6,6 +6,9 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func CreateUser() {
+
+}
 func GetUsers(c echo.Context) error {
 	// limit, offset, page := c.QueryParam("limit"), c.QueryParam("offset"), c.QueryParam("page")
 	//
