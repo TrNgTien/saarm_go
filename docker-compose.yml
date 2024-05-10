@@ -59,5 +59,6 @@ services:
       - APP_ENV_MINIO_SECRET_KEY=${APP_ENV_MINIO_SECRET_KEY}
     volumes:
       - .:/app
+      - /opt/google-cloud/service-account.json:/opt/google-cloud/service-account.json
     networks:
       - saarm-network

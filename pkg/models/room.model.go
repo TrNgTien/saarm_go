@@ -9,7 +9,7 @@ import (
 )
 
 type Room struct {
-	base.BaseModel
+	base.AccountBase
 	Name         string `json:"name"`
 	MonthlyPrice string `json:"monthly_price"`
 }

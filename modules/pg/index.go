@@ -46,7 +46,6 @@ func InitPg() *gorm.DB {
 	DB.AutoMigrate(
 		&models.User{},
 		&models.Room{},
-		&models.Account{},
 		&models.Apartment{},
 		&models.MetaLink{},
 		&models.Role{},
