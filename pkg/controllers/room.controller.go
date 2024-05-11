@@ -38,6 +38,13 @@ func DeleteRoomByID(c echo.Context) error {
 	})
 }
 
+func LoginRoom(c echo.Context) error {
+
+	return c.JSON(200, echo.Map{
+		"success": true,
+	})
+}
+
 func GetWaterMeter(c echo.Context) error {
 	roomID := c.Param("id")
 	file := new(common.UploadWaterMeter)

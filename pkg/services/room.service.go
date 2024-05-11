@@ -99,3 +99,12 @@ func SubmitWaterMeter(file common.UploadWaterMeter, roomID string) ([]string, er
 
 	return numbersDetected, nil
 }
+
+func CreateRoom() error{
+
+  return nil
+}
+
+func GetCurrentBill() error{
+  return nil
+}

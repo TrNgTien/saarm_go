@@ -18,6 +18,7 @@ func main() {
 	}))
 
 	e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {}))
+  e.Use(middleware.BodyLimit("100M"))
 
 	e.Use(middleware.SecureWithConfig(middleware.SecureConfig{
 		XSSProtection:         "",

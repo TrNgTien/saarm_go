@@ -39,10 +39,7 @@ func CreateApartments(apartment modelRequests.NewApartment) (modelReponses.Aparm
 
 func LinkUserApartment(linkReq modelRequests.LinkUser) error {
 
-	newUserAparment := models.UserApartment{
-		UserID:      linkReq.UserID,
-		ApartmentID: linkReq.ApartmentID,
-	}
+	newUserAparment := models.RoomApartment{}
 
 	err := pg.DB.Create(&newUserAparment).Error
 

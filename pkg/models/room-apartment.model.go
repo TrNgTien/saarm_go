@@ -8,15 +8,15 @@ import (
 	"gorm.io/gorm"
 )
 
-type UserApartment struct {
+type RoomApartment struct {
 	base.BaseModel
-	UserID      uuid.UUID `json:"userID"`
+	RoomID      uuid.UUID `json:"roomID"`
 	ApartmentID uuid.UUID `json:"apartmentID"`
-	User        User      `gorm:"foreignKey:UserID"`
+	Room        Room      `gorm:"foreignKey:RoomID"`
 	Apartment   Apartment `gorm:"foreignKey:ApartmentID"`
 }
 
-func (m *UserApartment) BeforeCreate(tx *gorm.DB) (err error) {
+func (m *RoomApartment) BeforeCreate(tx *gorm.DB) (err error) {
 	m.ID = uuid.New()
 	m.CreatedAt = time.Now()
 	m.ModifiedAt = time.Now()

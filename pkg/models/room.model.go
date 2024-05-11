@@ -10,8 +10,9 @@ import (
 
 type Room struct {
 	base.AccountBase
-	Name         string `json:"name"`
-	MonthlyPrice string `json:"monthly_price"`
+	Name     string `json:"name"`
+	Username string `json:"username" gorm:"unique"`
+	Password string `json:"password"`
 }
 
 func (m *Room) BeforeCreate(tx *gorm.DB) (err error) {

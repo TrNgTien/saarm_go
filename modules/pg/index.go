@@ -52,7 +52,9 @@ func InitPg() *gorm.DB {
 		&models.UserRole{},
 		&models.Permission{},
 		&models.PermissionMapping{},
-		&models.UserApartment{},
+		&models.RoomApartment{},
+		&models.MonthlyBill{},
+		&models.MonthlyBillMapping{},
 	)
 
 	return DB

@@ -15,8 +15,6 @@ type User struct {
 	Username    string    `json:"username" gorm:"unique"`
 	Password    string    `json:"password"`
 	Status      string    `json:"status" gorm:"type:string;default:100_ACTIVATED"`
-	ApartmentID uuid.UUID `json:"apartmentID" gorm:"default:null"`
-	Apartment   Apartment `gorm:"foreignKey:ApartmentID"`
 }
 
 func (m *User) BeforeCreate(tx *gorm.DB) (err error) {

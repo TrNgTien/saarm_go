@@ -24,4 +24,3 @@ func (m *Apartment) BeforeCreate(tx *gorm.DB) (err error) {
 	m.ModifiedAt = time.Now()
 	return
 }
-
