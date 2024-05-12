@@ -1,4 +1,4 @@
-package modelReponses
+package modelResponse
 
 import (
 	"time"
@@ -16,5 +16,9 @@ type UserResponse struct {
 type AuthResponse struct {
 	Value string `json:"value"`
 	Type  string `json:"type"`
+	LastLoginAt time.Time `json:"lastLoginAt"`
+}
+
+type SignUpResponse struct {
 	LastLoginAt time.Time `json:"lastLoginAt"`
 }

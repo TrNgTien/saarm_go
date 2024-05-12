@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type UserData struct {
+type UserDtoData struct {
 	ID          uuid.UUID
 	Password    string
 	Username    string

@@ -9,10 +9,12 @@ import (
 )
 
 type Room struct {
-	base.AccountBase
+	base.BaseModel
+	LastLoginAt time.Time `json:"lastLoginAt" gorm:"default:CURRENT_TIMESTAMP;type:time"`
+	Username    string    `json:"username" gorm:"unique"`
+	Password    string    `json:"password"`
+	Status      string    `json:"status" gorm:"type:string;default:100_ACTIVATED"`
 	Name     string `json:"name"`
-	Username string `json:"username" gorm:"unique"`
-	Password string `json:"password"`
 }
 
 func (m *Room) BeforeCreate(tx *gorm.DB) (err error) {

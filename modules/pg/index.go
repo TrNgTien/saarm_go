@@ -33,7 +33,8 @@ func InitPg() *gorm.DB {
 	pgConn := GetPgConnection()
 	DB, err = gorm.Open(postgres.Open(pgConn), &gorm.Config{
 		Logger:      logger.Default.LogMode(logger.Info),
-		QueryFields: true,
+    QueryFields: true,
+    SkipDefaultTransaction: true,
 	})
 
 	if err != nil {

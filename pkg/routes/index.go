@@ -47,4 +47,5 @@ func Init(e *echo.Echo) {
 	RoomGroupRoutes(p)
 	ConfigGroupRoutes(p)
 	ApartmentRoutes(p)
+	RoleGroupRoutes(p)
 }

@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"fmt"
-	modelRequests "saarm/pkg/models/request"
+	modelRequest "saarm/pkg/models/request"
 	"saarm/pkg/services"
 	"saarm/pkg/utilities"
 
@@ -11,13 +11,13 @@ import (
 )
 
 func SignIn(c echo.Context) error {
-	u := new(modelRequests.SignInRequest)
+	u := new(modelRequest.SignInRequest)
 
 	if err := c.Bind(u); err != nil {
 		return echo.ErrBadRequest
 	}
 
-	user := modelRequests.SignInRequest{
+	user := modelRequest.SignInRequest{
 		Username: u.Username,
 		Password: u.Password,
 	}
@@ -32,19 +32,19 @@ func SignIn(c echo.Context) error {
 }
 
 func SignUp(c echo.Context) error {
-	u := new(modelRequests.NewUser)
+	u := new(modelRequest.NewUser)
 	if err := c.Bind(u); err != nil {
 		return utilities.R400(c, err.Error())
 	}
 
-	user := modelRequests.SignUpRequest{
+	user := modelRequest.SignUpRequest{
 		Username:    u.Username,
 		Password:    u.Password,
 		Email:       u.Email,
 		ApartmentID: u.ApartmentID,
 	}
 
-	if user.Username == "" || user.Password == "" || user.Email == "" {
+	if user.Username == "" || user.Password == "" {
 		return utilities.R400(c, "[SignUp] | Missing request fields")
 	}
 

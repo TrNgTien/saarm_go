@@ -19,9 +19,3 @@ func (m *Role) BeforeCreate(tx *gorm.DB) (err error) {
 	m.ModifiedAt = time.Now()
 	return
 }
-
-type RoleResponse struct {
-	base.BaseModel
-	LastLoginAt time.Time `json:"lastLoginAt"`
-	Email       string    `json:"email"`
-}

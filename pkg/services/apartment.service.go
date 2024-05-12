@@ -5,14 +5,14 @@ import (
 	"saarm/modules/pg"
 	"saarm/pkg/common"
 	"saarm/pkg/models"
-	modelRequests "saarm/pkg/models/request"
+	modelRequest "saarm/pkg/models/request"
 	modelReponses "saarm/pkg/models/response"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
-func CreateApartments(apartment modelRequests.NewApartment) (modelReponses.AparmentResponse, error) {
+func CreateApartments(apartment modelRequest.NewApartment) (modelReponses.AparmentResponse, error) {
 	newApartment := models.Apartment{
 		Name:          apartment.Name,
 		LocationUrl:   apartment.LocationUrl,
@@ -37,7 +37,7 @@ func CreateApartments(apartment modelRequests.NewApartment) (modelReponses.Aparm
 	}, nil
 }
 
-func LinkUserApartment(linkReq modelRequests.LinkUser) error {
+func LinkUserApartment(linkReq modelRequest.LinkUser) error {
 
 	newUserAparment := models.RoomApartment{}
 

@@ -1,4 +1,4 @@
-package modelReponses
+package modelResponse
 
 import "github.com/google/uuid"
 

@@ -24,10 +24,10 @@ const (
 )
 
 const (
-  USER_PATH ="/users/"
-  AUTH_PATH ="/auth/"
-  ROOM_PATH ="/rooms/"
-  APARTMENT_ACCOUNT_PATH ="/accounts/"
-  APARTMENT_PATH ="/apartments/"
-  CONFIG_PATH ="/configs/"
+  USER_PATH ="/users"
+  AUTH_PATH ="/auth"
+  ROOM_PATH ="/rooms"
+  ROLE_PATH ="/roles"
+  APARTMENT_PATH ="/apartments"
+  CONFIG_PATH ="/configs"
 )

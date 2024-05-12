@@ -10,6 +10,6 @@ import (
 func AuthGroupRoutes(g *echo.Group) {
 	authGroup := g.Group(common.AUTH_PATH)
 
-	authGroup.POST("sign-in", controllers.SignIn)
-	authGroup.POST("sign-up", controllers.SignUp)
+	authGroup.POST("/sign-in", controllers.SignIn)
+	authGroup.POST("/sign-up", controllers.SignUp)
 }

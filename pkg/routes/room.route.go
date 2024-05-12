@@ -12,15 +12,15 @@ func RoomGroupRoutes(g *echo.Group) {
 
   // roomGroup.POST(":id", controllers.GetWaterMeter)
   // roomGroup.GET(":id/bills", controllers.GetWaterMeter)
-  rGroup.POST(":id/water-meter", controllers.GetWaterMeter)
+  rGroup.POST("/:id/water-meter", controllers.GetWaterMeter)
 
-	rGroup.GET("", controllers.GetApartments)
-	rGroup.GET(":id", controllers.GetApartmentByID)
-	rGroup.POST("", controllers.CreateApartments)
-	rGroup.PATCH(":id", controllers.PatchApartmentByID)
-	rGroup.PUT(":id", controllers.PutApartmentByID)
-	rGroup.DELETE("", controllers.DeleteApartmentByID)
-	rGroup.DELETE(":id", controllers.DeleteApartmentByID)
+	rGroup.GET("/", controllers.GetApartments)
+	rGroup.GET("/:id", controllers.GetApartmentByID)
+	rGroup.POST("/", controllers.CreateApartments)
+	rGroup.PATCH("/:id", controllers.PatchApartmentByID)
+	rGroup.PUT("/:id", controllers.PutApartmentByID)
+	rGroup.DELETE("/", controllers.DeleteApartmentByID)
+	rGroup.DELETE("/:id", controllers.DeleteApartmentByID)
 
-	rGroup.POST(":id/link/accounts/:accountId", controllers.LinkUserApartment)
+	rGroup.POST("/:id/link/accounts/:accountId", controllers.LinkUserApartment)
 }

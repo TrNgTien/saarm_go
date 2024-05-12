@@ -9,10 +9,11 @@ import (
 
 func ConfigGroupRoutes(g *echo.Group) {
 	configGroup := g.Group(common.CONFIG_PATH)
-	minioBucketPath := "minio/buckets"
 
-	configGroup.GET(minioBucketPath, controllers.GetBuckets)
-	configGroup.POST(minioBucketPath, controllers.CreateBucket)
-	configGroup.DELETE(minioBucketPath, controllers.DeleteBucket)
-	configGroup.POST(minioBucketPath+"/:name", controllers.UploadObject)
+	minioBucketGroup := configGroup.Group("/minio/buckets")
+	minioBucketGroup.GET("", controllers.GetBuckets)
+	minioBucketGroup.POST("/", controllers.CreateBucket)
+	minioBucketGroup.DELETE("/", controllers.DeleteBucket)
+	minioBucketGroup.POST("/:name", controllers.UploadObject)
+
 }
