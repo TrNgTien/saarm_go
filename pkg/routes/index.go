@@ -28,7 +28,7 @@ func Init(e *echo.Echo) {
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
 			return new(common.JwtCustomClaims)
 		},
-		SigningKey: []byte("secretKey"),
+		SigningKey: []byte(utilities.GetValueEnv("APP_ENV_SECRET_KEY", "secretKey")),
 		SuccessHandler: func(c echo.Context) {
 			user := c.Get("user").(*jwt.Token)
 			claims := user.Claims.(*common.JwtCustomClaims)
@@ -36,7 +36,7 @@ func Init(e *echo.Echo) {
 			role, userID := claims.Role, claims.UserID
 
 			if role == "" || userID == "" {
-				fmt.Println("Cannot get userID")
+				fmt.Println("Unauthorized!")
 				return
 			}
 

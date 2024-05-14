@@ -48,12 +48,16 @@ func SignIn(user modelRequest.SignInRequest) (modelResponse.AuthResponse, error)
 		return modelResponse.AuthResponse{}, errors.New("[SignIn] Incorrect password")
 	}
 
+
 	pg.DB.Exec("UPDATE users SET last_login_at = ? WHERE id = ?", time.Now(), userData.ID)
 
-	token, err := helpers.GenerateToken(userData.ID)
+  var userRole string
+
+	pg.DB.Raw("SELECT r.name FROM user_roles ur INNER JOIN roles r ON r.id = ur.role_id AND ur.user_id = ?", userData.ID).Scan(&userRole)
+
+	token, err := helpers.GenerateToken(userData.ID, userRole)
 
 	if err != nil {
-
 		return modelResponse.AuthResponse{}, err
 	}
 
