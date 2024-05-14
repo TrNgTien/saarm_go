@@ -9,7 +9,7 @@ import (
 )
 
 func UserGroupRoutes(g *echo.Group) {
-	uGroup := g.Group(common.USER_PATH, middlewares.PermissionMiddleware)
+	uGroup := g.Group(common.USER_PATH, middlewares.AdminPermission)
 
 	uGroup.GET("", controllers.GetUsers)
 	uGroup.GET("/:id", controllers.GetUserByID)

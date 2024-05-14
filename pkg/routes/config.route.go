@@ -9,7 +9,7 @@ import (
 )
 
 func ConfigGroupRoutes(g *echo.Group) {
-	configGroup := g.Group(common.CONFIG_PATH, middlewares.PermissionMiddleware)
+	configGroup := g.Group(common.CONFIG_PATH, middlewares.AdminPermission)
 
 	minioBucketGroup := configGroup.Group("/minio/buckets")
 
