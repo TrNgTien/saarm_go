@@ -16,3 +16,12 @@ func GetValueEnv(val, defaultVal string) string {
 
 	return val
 }
+
+func ArrayIncludeString(arr []string, target string) bool {
+  for _, item := range arr {
+    if item == target {
+      return true
+    }
+  }
+  return false
+}

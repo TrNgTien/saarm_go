@@ -1,24 +1,26 @@
 package middlewares
 
 import (
-	"fmt"
+	"saarm/pkg/common"
+	"saarm/pkg/utilities"
 
-	"github.com/golang-jwt/jwt/v5"
+	"github.com/labstack/echo/v4"
 )
 
-func VerifyToken(tokenString string, secretKey string) (jwt.MapClaims, error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return []byte(secretKey), nil
-	})
+func VerifyByRole(allowRoles []string, role string) bool {
+	return utilities.ArrayIncludeString(allowRoles, role)
+}
 
-	if err != nil {
-		return nil, err
+func PermissionMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		role := c.Get("role").(string)
+
+		adminRoles := common.FixedAllowedRoles
+
+		if !VerifyByRole(adminRoles, role) {
+			return utilities.R403(c, "Forbidden")
+		}
+
+		return next(c)
 	}
-
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		return nil, fmt.Errorf("invalid token claims")
-	}
-
-	return claims, nil
 }

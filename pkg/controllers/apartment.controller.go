@@ -51,7 +51,6 @@ func LinkUserApartment(c echo.Context) (err error) {
 }
 
 func GetApartments(c echo.Context) error {
-
 	limit, offset, page := c.QueryParam("limit"), c.QueryParam("offset"), c.QueryParam("page")
 	if limit == "" || offset == "" || page == "" {
 		return utilities.R400(c, "[GetAparments] TODO Paging!")

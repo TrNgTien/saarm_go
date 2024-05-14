@@ -1,8 +1,13 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
+	"saarm/pkg/common"
+	"saarm/pkg/utilities"
 
+	"github.com/golang-jwt/jwt/v5"
+	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 )
 
@@ -19,33 +24,43 @@ func Init(e *echo.Echo) {
 
 	p := g.Group("")
 
-	// p.Use(echojwt.WithConfig(echojwt.Config{
-	// 	SigningKey: []byte(os.Getenv("APP_ENV_SECRET_KEY")),
-	// 	BeforeFunc: func(c echo.Context) {
-	//
-	// 		token, ok := c.Get("user").(*jwt.Token) // by default token is stored under `user` key
-	// 		fmt.Println("token", token, ok)
-	//
-	// 		if !ok {
-	// 			fmt.Println("err")
-	// 			return
-	// 			// return utilities.R400(c, "JWT token missing or invalid")
-	// 		}
-	//
-	// 		claims, ok := token.Claims.(jwt.MapClaims) // by default claims is of type `jwt.MapClaims`
-	//
-	// 		fmt.Println("[claims] ", claims)
-	//
-	// 		if !ok {
-	// 			fmt.Println("failed to cast claims as jwt.MapClaims")
-	// 			return
-	// 		}
-	// 	},
-	// }))
+	config := echojwt.Config{
+		NewClaimsFunc: func(c echo.Context) jwt.Claims {
+			return new(common.JwtCustomClaims)
+		},
+		SigningKey: []byte("secretKey"),
+		SuccessHandler: func(c echo.Context) {
+			user := c.Get("user").(*jwt.Token)
+			claims := user.Claims.(*common.JwtCustomClaims)
+
+			role, userID := claims.Role, claims.UserID
+
+			if role == "" || userID == "" {
+				fmt.Println("Cannot get userID")
+				return
+			}
+
+      c.Set("role", role)
+      c.Set("userID", userID)
+		},
+		ErrorHandler: func(c echo.Context, _ error) error {
+			_, ok := c.Get("user").(*jwt.Token)
+
+			if !ok {
+				fmt.Println("JWT token missing or invalid")
+				return utilities.R400(c, "JWT token missing or invalid")
+			}
+
+			return nil
+		},
+	}
+
+	p.Use(echojwt.WithConfig(config))
 
 	UserGroupRoutes(p)
 	RoomGroupRoutes(p)
 	ConfigGroupRoutes(p)
 	ApartmentRoutes(p)
 	RoleGroupRoutes(p)
+
 }

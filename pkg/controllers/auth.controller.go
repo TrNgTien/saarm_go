@@ -38,18 +38,16 @@ func SignUp(c echo.Context) error {
 	}
 
 	user := modelRequest.SignUpRequest{
-		Username:    u.Username,
-		Password:    u.Password,
-		Email:       u.Email,
-		ApartmentID: u.ApartmentID,
+		Username: u.Username,
+		Password: u.Password,
+		Email:    u.Email,
 	}
 
 	if user.Username == "" || user.Password == "" {
-		return utilities.R400(c, "[SignUp] | Missing request fields")
+		return utilities.R400(c, "[SignUp] | Missing username or password!")
 	}
 
 	if services.IsExistedUser(user) {
-		fmt.Println("runn")
 		log.Error("[SignUp] | User has already exsited!")
 		return utilities.R400(c, "[SignUp] | User has already exsited!")
 	}

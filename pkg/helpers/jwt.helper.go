@@ -1,7 +1,7 @@
 package helpers
 
 import (
-	"os"
+	// "os"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
@@ -12,11 +12,12 @@ func GenerateToken(userID uuid.UUID) (string, error) {
 		"exp":    GetOneDay(),
 		"iat":    GetCurrentTime(),
 		"userID": userID,
+		"role":   "guest",
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	secretKey := os.Getenv("APP_ENV_SECRET_KEY")
+	// secretKey := os.Getenv("APP_ENV_SECRET_KEY")
 
-	return token.SignedString([]byte(secretKey))
+	return token.SignedString([]byte("secretKey"))
 }

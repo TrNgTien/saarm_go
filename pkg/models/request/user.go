@@ -1,13 +1,10 @@
 package modelRequest
 
-import "github.com/google/uuid"
-
 type NewUser struct {
-	Username    string    `json:"username"`
-	Password    string    `json:"password"`
-	Email       string    `json:"email"`
-	Status      string    `json:"status"`
-	ApartmentID uuid.UUID `json:"apartmentID"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
+	Status   string `json:"status"`
 }
 
 type SignInRequest struct {
@@ -16,8 +13,7 @@ type SignInRequest struct {
 }
 
 type SignUpRequest struct {
-	Username    string    `json:"username"`
-	Password    string    `json:"password"`
-	Email       string    `json:"email"`
-	ApartmentID uuid.UUID `json:"apartmentID"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
 }

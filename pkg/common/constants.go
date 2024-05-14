@@ -11,7 +11,7 @@ const (
 	JwtOauth2 = "Oauth2"
 )
 
-var FixedAllowedRoles = [2]string{"superadmin", "admin"}
+var FixedAllowedRoles = []string{"superadmin", "admin"}
 
 const (
 	WATER_METER_PATH = "assets/water-meter/"

@@ -10,6 +10,7 @@ import (
 	"saarm/pkg/models"
 	modelRequest "saarm/pkg/models/request"
 	modelResponse "saarm/pkg/models/response"
+	"saarm/pkg/utilities"
 	"time"
 
 	"golang.org/x/oauth2"
@@ -72,8 +73,7 @@ func SignUp(user modelRequest.SignUpRequest) (modelResponse.SignUpResponse, erro
 	}
 
 	//---------- Assign Role for user------------
-	// assignRoleUser := models.UserRole{UserID: newUser.ID, RoleID: utilities.ParseStringToUuid("919eefcc-6644-415b-8b1c-c1925210a262")}
-	assignRoleUser := models.UserRole{UserID: newUser.ID} // RoleID: utilities.ParseStringToUuid("919eefcc-6644-415b-8b1c-c1925210a262")
+	assignRoleUser := models.UserRole{UserID: newUser.ID, RoleID: utilities.ParseStringToUuid("919eefcc-6644-415b-8b1c-c1925210a262")}
 
 	assignRoleUserErr := tx.Create(&assignRoleUser).Error
 

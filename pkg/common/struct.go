@@ -1,5 +1,9 @@
 package common
 
+import (
+	"github.com/golang-jwt/jwt/v5"
+)
+
 type PaginationQuery struct {
 	Limit  int
 	Offset int
@@ -7,6 +11,14 @@ type PaginationQuery struct {
 }
 
 type UploadWaterMeter struct {
-	CroppedFile string `json:"croppedFile"`
+	CroppedFile  string `json:"croppedFile"`
 	OriginalFile string `json:"originalFile"`
+}
+
+type JwtCustomClaims struct {
+	Role   string `json:"role"`
+	UserID string `json:"userID"`
+	Exp    int64  `json:"exp"`
+	Iat    int64  `json:"iat"`
+	jwt.RegisteredClaims
 }

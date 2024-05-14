@@ -7,7 +7,7 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	// "gorm.io/gorm/logger"
+	"gorm.io/gorm/logger"
 
 	"saarm/pkg/models"
 	"saarm/pkg/utilities"
@@ -32,7 +32,7 @@ func InitPg() *gorm.DB {
 
 	pgConn := GetPgConnection()
 	DB, err = gorm.Open(postgres.Open(pgConn), &gorm.Config{
-		// Logger:      logger.Default.LogMode(logger.Info),
+		Logger:      logger.Default.LogMode(logger.Info),
     QueryFields: true,
     SkipDefaultTransaction: true,
 	})
