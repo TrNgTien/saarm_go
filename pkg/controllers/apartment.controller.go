@@ -17,12 +17,15 @@ func CreateApartments(c echo.Context) error {
 		return utilities.R400(c, err.Error())
 	}
 
+  userID := c.Get("userID").(string)
+
 	apartment := modelRequests.NewApartment{
 		Name:          a.Name,
 		LocationUrl:   a.LocationUrl,
 		Address:       a.Address,
 		TotalRoom:     a.TotalRoom,
 		RoomAvailable: a.RoomAvailable,
+    UserID: utilities.ParseStringToUuid(userID),
 	}
 
 	apartmentCreated, err := services.CreateApartments(apartment)
@@ -32,22 +35,6 @@ func CreateApartments(c echo.Context) error {
 	}
 
 	return utilities.R200(c, apartmentCreated)
-}
-
-func LinkUserApartment(c echo.Context) (err error) {
-	apartmentID, userID := c.Param("id"), c.Param("userId")
-	apartmentId, userId := utilities.ParseStringToUuid(apartmentID), utilities.ParseStringToUuid(userID)
-
-	linkRequest := modelRequests.LinkUser{
-		ApartmentID: apartmentId,
-		UserID:      userId,
-	}
-
-	if err := services.LinkUserApartment(linkRequest); err != nil {
-		return utilities.R204(c)
-	}
-
-	return utilities.R400(c, err.Error())
 }
 
 func GetApartments(c echo.Context) error {

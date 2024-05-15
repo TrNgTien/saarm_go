@@ -17,5 +17,5 @@ func UserGroupRoutes(g *echo.Group) {
 	uGroup.POST("", controllers.CreateUser)
 
 	uGroup.PUT("/:id", controllers.UpdateUser)
-	uGroup.PATCH("/:id", controllers.UpdateUser)
+	uGroup.PATCH("/:id", controllers.PatchUser)
 }

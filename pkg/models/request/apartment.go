@@ -9,10 +9,6 @@ type (
 		Address       string `json:"address"`
 		TotalRoom     int16  `json:"totalRoom"`
 		RoomAvailable int16  `json:"roomAvailable"`
-	}
-
-	LinkUser struct {
 		UserID      uuid.UUID `json:"userId"`
-		ApartmentID uuid.UUID `json:"apartmentId"`
 	}
 )

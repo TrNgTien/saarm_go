@@ -7,23 +7,13 @@ import (
 	"saarm/pkg/common"
 	"saarm/pkg/dto"
 	"saarm/pkg/helpers"
-	"saarm/pkg/models"
 	modelRequest "saarm/pkg/models/request"
 	modelResponse "saarm/pkg/models/response"
-	"saarm/pkg/utilities"
 	"time"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
-	"gorm.io/gorm/clause"
 )
-
-func IsExistedUser(user modelRequest.SignUpRequest) bool {
-	var count int
-	pg.DB.Raw("select count(*) from users where username = ?", user.Username).Scan(&count)
-
-	return count > 0
-}
 
 func comparePassword(reqPass string, hashedPass string) bool {
 	return helpers.ValidatePassword(reqPass, hashedPass)
@@ -31,6 +21,7 @@ func comparePassword(reqPass string, hashedPass string) bool {
 
 func SignIn(user modelRequest.SignInRequest) (modelResponse.AuthResponse, error) {
 	var userData dto.UserDtoData
+	var userRole string
 
 	if user.Username == "" {
 		return modelResponse.AuthResponse{}, errors.New("[SignIn] Username cannot be empty")
@@ -48,10 +39,7 @@ func SignIn(user modelRequest.SignInRequest) (modelResponse.AuthResponse, error)
 		return modelResponse.AuthResponse{}, errors.New("[SignIn] Incorrect password")
 	}
 
-
 	pg.DB.Exec("UPDATE users SET last_login_at = ? WHERE id = ?", time.Now(), userData.ID)
-
-  var userRole string
 
 	pg.DB.Raw("SELECT r.name FROM user_roles ur INNER JOIN roles r ON r.id = ur.role_id AND ur.user_id = ?", userData.ID).Scan(&userRole)
 
@@ -62,33 +50,6 @@ func SignIn(user modelRequest.SignInRequest) (modelResponse.AuthResponse, error)
 	}
 
 	return modelResponse.AuthResponse{Type: common.JwtBearer, Value: token, LastLoginAt: userData.LastLoginAt}, nil
-}
-
-func SignUp(user modelRequest.SignUpRequest) (modelResponse.SignUpResponse, error) {
-	tx := pg.DB.Begin()
-
-	newUser := models.User{Email: user.Email, Password: helpers.HashPassword(user.Password), Username: user.Username}
-
-	result := tx.Clauses(clause.Returning{Columns: []clause.Column{{Name: "id"}}}).Create(&newUser)
-
-	if result.Error != nil {
-		tx.Rollback()
-		return modelResponse.SignUpResponse{}, errors.New(result.Error.Error())
-	}
-
-	//---------- Assign Role for user------------
-	assignRoleUser := models.UserRole{UserID: newUser.ID, RoleID: utilities.ParseStringToUuid("919eefcc-6644-415b-8b1c-c1925210a262")}
-
-	assignRoleUserErr := tx.Create(&assignRoleUser).Error
-
-	if assignRoleUserErr != nil {
-		tx.Rollback()
-		return modelResponse.SignUpResponse{}, assignRoleUserErr
-	}
-
-	tx.Commit()
-
-	return modelResponse.SignUpResponse{}, nil
 }
 
 func SignUpWithGoogle() {

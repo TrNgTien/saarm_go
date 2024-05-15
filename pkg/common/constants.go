@@ -14,6 +14,20 @@ const (
 var FixedAllowedRoles = []string{"superadmin", "admin"}
 
 const (
+	SUPER_ADMIN_ROLE = "superadmin"
+	ADMIN_ROLE       = "admin"
+	GUEST_ROLE       = "guest"
+	LANDLORD_ROLE    = "landlord"
+)
+
+const (
+	DELETED_STATUS   = "000_DELETED"
+	ACTIVATED_STATUS = "100_ACTIVATED"
+	DEACTIVED_STATUS = "200_DEACTIVED"
+	ARCHIVE_STATUS   = "300_ARCHIVE"
+)
+
+const (
 	WATER_METER_PATH = "assets/water-meter/"
 )
 
@@ -24,10 +38,10 @@ const (
 )
 
 const (
-  USER_PATH ="/users"
-  AUTH_PATH ="/auth"
-  ROOM_PATH ="/rooms"
-  ROLE_PATH ="/roles"
-  APARTMENT_PATH ="/apartments"
-  CONFIG_PATH ="/configs"
+	USER_PATH      = "/users"
+	AUTH_PATH      = "/auth"
+	ROOM_PATH      = "/rooms"
+	ROLE_PATH      = "/roles"
+	APARTMENT_PATH = "/apartments"
+	CONFIG_PATH    = "/configs"
 )

@@ -4,10 +4,17 @@ import (
 	"encoding/base64"
 	"fmt"
 	"os"
+	"saarm/modules/pg"
 	"saarm/pkg/common"
 	"saarm/pkg/helpers"
+	"saarm/pkg/models"
 	"saarm/pkg/utilities"
 	"strings"
+
+	modelRequest "saarm/pkg/models/request"
+	modelResponse "saarm/pkg/models/response"
+
+	"github.com/google/uuid"
 )
 
 func saveFileSystem(file, roomID string) (string, error) {
@@ -100,11 +107,60 @@ func SubmitWaterMeter(file common.UploadWaterMeter, roomID string) ([]string, er
 	return numbersDetected, nil
 }
 
-func CreateRoom() error{
+func CreateRoom(room modelRequest.NewRoom) (modelResponse.RoomResponse, error) {
+	tx := pg.DB.Begin()
 
-  return nil
+	newRoom := models.Room{
+		Name:          room.Name,
+		Password:      room.Password,
+		Username:      room.Username,
+		RoomPrice:     room.RoomPrice,
+		MaxPeople:     room.MaxPeople,
+		CurrentPeople: 0,
+		ApartmentID:   room.ApartmentID,
+	}
+
+	newRoomErr := tx.Create(&newRoom).Error
+
+	if newRoomErr != nil {
+		tx.Rollback()
+		return modelResponse.RoomResponse{}, newRoomErr
+	}
+
+	tx.Commit()
+	return modelResponse.RoomResponse{ID: newRoom.ID, Name: newRoom.Name}, nil
 }
 
-func GetCurrentBill() error{
-  return nil
+func GetRooms() error {
+
+	return nil
+}
+
+func GetRoomByID(roomID uuid.UUID) error {
+	var room modelResponse.AparmentResponse
+
+	pg.DB.Raw("SELECT * FROM rooms WHERE id = ?", roomID).Scan(&room)
+	return nil
+}
+
+func GetCurrentBill() error {
+	return nil
+}
+
+func DuplicateRoom(roomID uuid.UUID) (modelResponse.DuplicateRoomResponse, error) {
+	tx := pg.DB.Begin()
+	room := models.Room{}
+
+	tx.Raw("SELECT max_people, room_price, apartment_id, current_people FROM rooms WHERE id = ?", roomID).Scan(&room)
+
+	duplicatedRoomErr := tx.Create(&room).Error
+
+	if duplicatedRoomErr != nil {
+
+		tx.Rollback()
+		return modelResponse.DuplicateRoomResponse{}, duplicatedRoomErr
+	}
+
+	tx.Commit()
+	return modelResponse.DuplicateRoomResponse{ID: room.ID}, nil
 }

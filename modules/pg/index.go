@@ -32,9 +32,9 @@ func InitPg() *gorm.DB {
 
 	pgConn := GetPgConnection()
 	DB, err = gorm.Open(postgres.Open(pgConn), &gorm.Config{
-		Logger:      logger.Default.LogMode(logger.Info),
-    QueryFields: true,
-    SkipDefaultTransaction: true,
+		Logger:                 logger.Default.LogMode(logger.Info),
+		QueryFields:            true,
+		SkipDefaultTransaction: true,
 	})
 
 	if err != nil {
@@ -42,7 +42,7 @@ func InitPg() *gorm.DB {
 	}
 
 	log.Println("[InitPg] Connected!")
-	log.Println("[InitPg] RUNNING MIGRATIONS....")
+	log.Println("[InitPg] Running Migrations....")
 
 	DB.AutoMigrate(
 		&models.User{},
@@ -53,10 +53,10 @@ func InitPg() *gorm.DB {
 		&models.UserRole{},
 		&models.Permission{},
 		&models.PermissionMapping{},
-		&models.RoomApartment{},
-		&models.MonthlyBill{},
-		&models.MonthlyBillMapping{},
+		&models.MonthlyBillLogs{},
 	)
+
+	log.Println("[InitPg] Migrate Done....")
 
 	return DB
 

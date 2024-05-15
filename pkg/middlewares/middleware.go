@@ -18,7 +18,7 @@ func AdminPermission(next echo.HandlerFunc) echo.HandlerFunc {
 		adminRoles := common.FixedAllowedRoles
 
 		if !VerifyByRole(adminRoles, role) {
-			return utilities.R403(c, "Forbidden")
+			return utilities.R403(c)
 		}
 
 		return next(c)
@@ -29,10 +29,10 @@ func LandlordPermission(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		role := c.Get("role").(string)
 
-		adminRoles := append(common.FixedAllowedRoles, "landlord")
+		allowRoles := append(common.FixedAllowedRoles, common.LANDLORD_ROLE)
 
-		if !VerifyByRole(adminRoles, role) {
-			return utilities.R403(c, "Forbidden")
+		if !VerifyByRole(allowRoles, role) {
+			return utilities.R403(c)
 		}
 
 		return next(c)

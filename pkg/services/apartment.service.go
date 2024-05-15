@@ -19,6 +19,7 @@ func CreateApartments(apartment modelRequest.NewApartment) (modelReponses.Aparme
 		Address:       apartment.Address,
 		TotalRoom:     apartment.TotalRoom,
 		RoomAvailable: apartment.RoomAvailable,
+    UserID: apartment.UserID,
 	}
 
 	err := pg.DB.Create(&newApartment).Error
@@ -35,19 +36,6 @@ func CreateApartments(apartment modelRequest.NewApartment) (modelReponses.Aparme
 		TotalRoom:     newApartment.TotalRoom,
 		RoomAvailable: newApartment.RoomAvailable,
 	}, nil
-}
-
-func LinkUserApartment(linkReq modelRequest.LinkUser) error {
-
-	newUserAparment := models.RoomApartment{}
-
-	err := pg.DB.Create(&newUserAparment).Error
-
-	if err != nil {
-		return errors.New(err.Error())
-	}
-
-	return nil
 }
 
 func GetApartments(query common.PaginationQuery) ([]modelReponses.AparmentResponse, error) {

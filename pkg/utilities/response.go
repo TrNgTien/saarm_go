@@ -15,16 +15,24 @@ func R200[T any](c echo.Context, data T) error {
 	})
 }
 
-func R403(c echo.Context, msg string) error {
-	return c.JSON(403, echo.Map{
-		"success": false,
-		"message": msg,
-	})
-}
 func R400(c echo.Context, msg string) error {
 	return c.JSON(400, echo.Map{
 		"success": false,
 		"message": msg,
+	})
+}
+
+func R401(c echo.Context, msg string) error {
+	return c.JSON(401, echo.Map{
+		"success": false,
+		"message": "Unauthorized!",
+	})
+}
+
+func R403(c echo.Context) error {
+	return c.JSON(403, echo.Map{
+		"success": false,
+		"message": "Forbidden",
 	})
 }
 

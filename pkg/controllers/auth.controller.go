@@ -52,7 +52,7 @@ func SignUp(c echo.Context) error {
 		return utilities.R400(c, "[SignUp] | User has already exsited!")
 	}
 
-	userData, err := services.SignUp(user)
+	userData, err := services.CreateUser(user)
 
 	if err != nil {
 		fmt.Println("SignUp ", err)

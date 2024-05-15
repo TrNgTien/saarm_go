@@ -2,7 +2,7 @@ package utilities
 
 import "os"
 
-func GetValueOrDefault(val interface{}, defaultVal interface{}) interface{} {
+func GetValueOrDefault(val, defaultVal interface{}) interface{} {
 
 	if val == nil || val == "" {
 		return defaultVal
