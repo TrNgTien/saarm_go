@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"saarm/pkg/common"
 	modelRequest "saarm/pkg/models/request"
 	"saarm/pkg/services"
@@ -82,12 +83,14 @@ func GetWaterMeter(c echo.Context) error {
 	file := new(common.UploadWaterMeter)
 
 	if err := c.Bind(file); err != nil {
+    fmt.Println("[GetWaterMeter][Bind body]: ", err.Error())
 		return utilities.R400(c, err.Error())
 	}
 
 	numberDetected, err := services.SubmitWaterMeter(*file, roomID)
 
 	if err != nil {
+    fmt.Println("[GetWaterMeter][detection service]: ", err.Error())
 		return utilities.R400(c, err.Error())
 	}
 

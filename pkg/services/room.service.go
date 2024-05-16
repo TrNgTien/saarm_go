@@ -69,6 +69,7 @@ func SubmitWaterMeter(file common.UploadWaterMeter, roomID string) ([]string, er
 	fileCropped, err := saveFileSystem(file.CroppedFile, roomID)
 
 	if err != nil {
+    fmt.Println("[SubmitWaterMeter] cropped ", err.Error())
 		return numbersDetected, err
 	}
 
@@ -84,14 +85,14 @@ func SubmitWaterMeter(file common.UploadWaterMeter, roomID string) ([]string, er
 	info, err := UploadObject(common.MINIO_BUCKET_CROPPED, fileCropped, IMAGE_WATER_METER_PATH)
 
 	if err != nil {
-		fmt.Println("Failed to upload images", err.Error())
+		fmt.Println("Failed to upload cropped image Minio", err.Error())
 		return numbersDetected, err
 	}
 
 	infoOriginal, err := UploadObject(common.MINIO_BUCKET_ORIGINAL, fileOriginal, ORIGINAL_WATER_METER_PATH)
 
 	if err != nil {
-		fmt.Println("Failed to upload images", err.Error())
+		fmt.Println("Failed to upload original image", err.Error())
 		return numbersDetected, err
 	}
 
@@ -112,7 +113,7 @@ func CreateRoom(room modelRequest.NewRoom) (modelResponse.RoomResponse, error) {
 
 	newRoom := models.Room{
 		Name:          room.Name,
-		Password:      room.Password,
+		Password:      helpers.HashPassword(room.Password),
 		Username:      room.Username,
 		RoomPrice:     room.RoomPrice,
 		MaxPeople:     room.MaxPeople,

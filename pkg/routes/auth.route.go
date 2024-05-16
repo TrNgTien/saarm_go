@@ -12,4 +12,6 @@ func AuthGroupRoutes(g *echo.Group) {
 
 	authGroup.POST("/sign-in", controllers.SignIn)
 	authGroup.POST("/sign-up", controllers.SignUp)
+
+	authGroup.POST("/sign-in/tenant", controllers.SignIn)
 }
