@@ -22,6 +22,8 @@ services:
       - MINIO_SERVER_SECRET_KEY=${MINIO_SERVER_SECRET_KEY}
     volumes:
       - ./volumes/minio-data:/bitnami/minio/data
+    networks:
+      - saarm-network
 
   saarm_db:
     image: "bitnami/postgresql:16"
