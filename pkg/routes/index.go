@@ -33,15 +33,16 @@ func Init(e *echo.Echo) {
 			user := c.Get("user").(*jwt.Token)
 			claims := user.Claims.(*common.JwtCustomClaims)
 
-			role, userID := claims.Role, claims.UserID
+			role, userID, roomID := claims.Role, claims.UserID, claims.RoomID
 
-			if role == "" || userID == "" {
+			if role == "" {
 				fmt.Println("Unauthorized!")
 				return
 			}
 
-      c.Set("role", role)
-      c.Set("userID", userID)
+			c.Set("role", role)
+			c.Set("userID", userID)
+			c.Set("roomID", roomID)
 		},
 		ErrorHandler: func(c echo.Context, _ error) error {
 			_, ok := c.Get("user").(*jwt.Token)

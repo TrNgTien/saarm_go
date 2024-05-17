@@ -3,7 +3,6 @@ package pg
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -17,11 +16,11 @@ var DB *gorm.DB
 
 func GetPgConnection() string {
 	database := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		utilities.GetValueOrDefault(os.Getenv("APP_ENV_POSTGRESQL_HOST"), "localhost"),
-		utilities.GetValueOrDefault(os.Getenv("APP_ENV_POSTGRESQL_PORT"), "5400"),
-		utilities.GetValueOrDefault(os.Getenv("APP_ENV_POSTGRESQL_USERNAME"), "tientran"),
-		utilities.GetValueOrDefault(os.Getenv("APP_ENV_POSTGRESQL_PASSWORD"), "tien123@"),
-		utilities.GetValueOrDefault(os.Getenv("APP_ENV_POSTGRESQL_DATABASE"), "saarm_db"),
+		utilities.GetValueEnv("APP_ENV_POSTGRESQL_HOST", "localhost"),
+		utilities.GetValueEnv("APP_ENV_POSTGRESQL_PORT", "5400"),
+		utilities.GetValueEnv("APP_ENV_POSTGRESQL_USERNAME", "tientran"),
+		utilities.GetValueEnv("APP_ENV_POSTGRESQL_PASSWORD", "tien123@"),
+		utilities.GetValueEnv("APP_ENV_POSTGRESQL_DATABASE", "saarm_db"),
 	)
 
 	return database

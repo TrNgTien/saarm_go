@@ -17,21 +17,21 @@ import (
 	"github.com/google/uuid"
 )
 
-func saveFileSystem(file, roomID string) (string, error) {
+func saveFileSystem(file, roomID string, fileChan chan string) {
 	baseData := file[strings.IndexByte(file, ',')+1:]
 	var outputFileName string
 
 	decodedBase64, err := base64.StdEncoding.DecodeString(baseData)
 
 	if err != nil {
-		return outputFileName, err
+		fileChan <- outputFileName
 	}
 
 	parts := strings.SplitN(file, ";", 2)
 	var fileType string
 
 	if len(parts) != 2 {
-		return outputFileName, err
+		fileChan <- outputFileName
 	}
 
 	mimeType := parts[0]
@@ -45,39 +45,32 @@ func saveFileSystem(file, roomID string) (string, error) {
 	f, err := os.Create(pathData)
 
 	if err != nil {
-		return outputFileName, err
+		fileChan <- outputFileName
 	}
 
 	defer f.Close()
 
 	if _, err := f.Write(decodedBase64); err != nil {
-		return outputFileName, err
+		fileChan <- outputFileName
 	}
 
 	if err := f.Sync(); err != nil {
-		return outputFileName, err
+		fileChan <- outputFileName
 	}
 
 	fmt.Println("[storeWaterMeterFile] | Created system file")
 
-	return outputFileName, nil
+	fileChan <- outputFileName
 }
 
 func SubmitWaterMeter(file common.UploadWaterMeter, roomID string) ([]string, error) {
 	var numbersDetected []string
+	fileChan := make(chan string)
 
-	fileCropped, err := saveFileSystem(file.CroppedFile, roomID)
+	go saveFileSystem(file.CroppedFile, roomID, fileChan)
+	go saveFileSystem(file.OriginalFile, roomID, fileChan)
 
-	if err != nil {
-    fmt.Println("[SubmitWaterMeter] cropped ", err.Error())
-		return numbersDetected, err
-	}
-
-	fileOriginal, err := saveFileSystem(file.OriginalFile, roomID)
-
-	if err != nil {
-		return numbersDetected, err
-	}
+	fileCropped, fileOriginal := <-fileChan, <-fileChan
 
 	IMAGE_WATER_METER_PATH := utilities.GetFilePath(common.WATER_METER_PATH, fileCropped)
 	ORIGINAL_WATER_METER_PATH := utilities.GetFilePath(common.WATER_METER_PATH, fileOriginal)
@@ -144,7 +137,7 @@ func GetRoomByID(roomID uuid.UUID) error {
 	return nil
 }
 
-func GetCurrentBill() error {
+func GetBills() error {
 	return nil
 }
 
@@ -165,3 +158,8 @@ func DuplicateRoom(roomID uuid.UUID) (modelResponse.DuplicateRoomResponse, error
 	tx.Commit()
 	return modelResponse.DuplicateRoomResponse{ID: room.ID}, nil
 }
+
+// func SubmitWaterMeterRecord () error{
+//   var waterMeterNumber string
+//   return nil
+// }

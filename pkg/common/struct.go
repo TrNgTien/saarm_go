@@ -18,6 +18,7 @@ type UploadWaterMeter struct {
 type JwtCustomClaims struct {
 	Role   string `json:"role"`
 	UserID string `json:"userID"`
+	RoomID string `json:"roomID"`
 	Exp    int64  `json:"exp"`
 	Iat    int64  `json:"iat"`
 	jwt.RegisteredClaims

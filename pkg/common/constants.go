@@ -18,6 +18,7 @@ const (
 	ADMIN_ROLE       = "admin"
 	GUEST_ROLE       = "guest"
 	LANDLORD_ROLE    = "landlord"
+	TENANT_ROLE    = "tenant"
 )
 
 const (

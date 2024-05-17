@@ -15,30 +15,7 @@ import (
 	"golang.org/x/oauth2/google"
 )
 
-func SignInTenant(user modelRequest.SignInRequest) (modelResponse.AuthResponse, error) {
-	var userData dto.UserDtoData
-	var userRole string
-
-	if user.Username == "" {
-		return modelResponse.AuthResponse{}, errors.New("[SignIn] Username cannot be empty")
-	}
-
-	pg.DB.Raw("SELECT id, username, password, last_login_at FROM users WHERE username = ?", user.Username).Scan(&userData)
-
-	if userData.Username == "" {
-		return modelResponse.AuthResponse{}, errors.New("[SignIn] Error fetching user")
-	}
-
-	isMatchPass := comparePassword(user.Password, userData.Password)
-
-	if !isMatchPass {
-		return modelResponse.AuthResponse{}, errors.New("[SignIn] Incorrect password")
-	}
-
-	pg.DB.Exec("UPDATE users SET last_login_at = ? WHERE id = ?", time.Now(), userData.ID)
-
-	pg.DB.Raw("SELECT r.name FROM user_roles ur INNER JOIN roles r ON r.id = ur.role_id AND ur.user_id = ?", userData.ID).Scan(&userRole)
-
+func getToken(userData dto.UserDtoData, userRole string) (modelResponse.AuthResponse, error) {
 	token, err := helpers.GenerateToken(userData.ID, userRole)
 
 	if err != nil {
@@ -48,8 +25,26 @@ func SignInTenant(user modelRequest.SignInRequest) (modelResponse.AuthResponse, 
 	return modelResponse.AuthResponse{Type: common.JwtBearer, Value: token, LastLoginAt: userData.LastLoginAt}, nil
 }
 
-func comparePassword(reqPass string, hashedPass string) bool {
-	return helpers.ValidatePassword(reqPass, hashedPass)
+func verifyPass(user modelRequest.SignInRequest, userData dto.UserDtoData) bool {
+	return helpers.ValidatePassword(user.Password, userData.Password)
+}
+
+func SignInByRoom(user modelRequest.SignInRequest, userData dto.UserDtoData) (modelResponse.AuthResponse, error) {
+	pg.DB.Raw("SELECT id, username, password, last_login_at FROM rooms WHERE username = ?", user.Username).Scan(&userData)
+
+	if userData.Username == "" {
+		return modelResponse.AuthResponse{}, errors.New("[SignIn] Error fetching user")
+	}
+
+	isMatchPass := verifyPass(user, userData)
+
+	if !isMatchPass {
+		return modelResponse.AuthResponse{}, errors.New("[SignIn] Incorrect password")
+	}
+
+	pg.DB.Exec("UPDATE rooms SET last_login_at = ? WHERE id = ?", time.Now(), userData.ID)
+
+	return getToken(userData, common.TENANT_ROLE)
 }
 
 func SignIn(user modelRequest.SignInRequest) (modelResponse.AuthResponse, error) {
@@ -63,10 +58,10 @@ func SignIn(user modelRequest.SignInRequest) (modelResponse.AuthResponse, error)
 	pg.DB.Raw("SELECT id, username, password, last_login_at FROM users WHERE username = ?", user.Username).Scan(&userData)
 
 	if userData.Username == "" {
-		return modelResponse.AuthResponse{}, errors.New("[SignIn] Error fetching user")
+		return SignInByRoom(user, userData)
 	}
 
-	isMatchPass := comparePassword(user.Password, userData.Password)
+	isMatchPass := verifyPass(user, userData)
 
 	if !isMatchPass {
 		return modelResponse.AuthResponse{}, errors.New("[SignIn] Incorrect password")
@@ -76,13 +71,7 @@ func SignIn(user modelRequest.SignInRequest) (modelResponse.AuthResponse, error)
 
 	pg.DB.Raw("SELECT r.name FROM user_roles ur INNER JOIN roles r ON r.id = ur.role_id AND ur.user_id = ?", userData.ID).Scan(&userRole)
 
-	token, err := helpers.GenerateToken(userData.ID, userRole)
-
-	if err != nil {
-		return modelResponse.AuthResponse{}, err
-	}
-
-	return modelResponse.AuthResponse{Type: common.JwtBearer, Value: token, LastLoginAt: userData.LastLoginAt}, nil
+	return getToken(userData, userRole)
 }
 
 func SignUpWithGoogle() {

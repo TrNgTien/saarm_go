@@ -65,14 +65,13 @@ func PatchRoomByID(c echo.Context) error {
 	})
 }
 
-func DeleteRoomByID(c echo.Context) error {
+func DeleteRooms(c echo.Context) error {
 	return c.JSON(200, echo.Map{
 		"success": true,
 	})
 }
 
-func LoginRoom(c echo.Context) error {
-
+func DeleteRoomByID(c echo.Context) error {
 	return c.JSON(200, echo.Map{
 		"success": true,
 	})
@@ -83,18 +82,22 @@ func GetWaterMeter(c echo.Context) error {
 	file := new(common.UploadWaterMeter)
 
 	if err := c.Bind(file); err != nil {
-    fmt.Println("[GetWaterMeter][Bind body]: ", err.Error())
+		fmt.Println("[GetWaterMeter][Bind body]: ", err.Error())
 		return utilities.R400(c, err.Error())
 	}
 
 	numberDetected, err := services.SubmitWaterMeter(*file, roomID)
 
 	if err != nil {
-    fmt.Println("[GetWaterMeter][detection service]: ", err.Error())
+		fmt.Println("[GetWaterMeter][detection service]: ", err.Error())
 		return utilities.R400(c, err.Error())
 	}
 
 	return utilities.R200(c, numberDetected)
+}
+
+func GetBills(c echo.Context) error {
+	return nil
 }
 
 func DuplicateRoom(c echo.Context) error {

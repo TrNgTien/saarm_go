@@ -25,7 +25,7 @@ func SignIn(c echo.Context) error {
 	userData, err := services.SignIn(user)
 
 	if err != nil {
-		return utilities.R400(c, "[SignIn] Cannot get user!")
+		return utilities.R400(c, err.Error())
 	}
 
 	return utilities.R200(c, userData)
