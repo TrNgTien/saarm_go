@@ -50,7 +50,14 @@ func GetRooms(c echo.Context) error {
 func GetRoomByID(c echo.Context) error {
 	ID := c.Param("id")
 	roomID := utilities.ParseStringToUuid(ID)
-	return services.GetRoomByID(roomID)
+	roomByID, err := services.GetRoomByID(roomID)
+
+	if err != nil {
+		return utilities.R400(c, "[GetRoomByID] | "+err.Error())
+
+	}
+
+	return utilities.R200(c, roomByID)
 }
 
 func PutRoomByID(c echo.Context) error {
@@ -77,7 +84,7 @@ func DeleteRoomByID(c echo.Context) error {
 	})
 }
 
-func GetWaterMeter(c echo.Context) error {
+func DetectWaterMeter(c echo.Context) error {
 	roomID := c.Param("id")
 	file := new(common.UploadWaterMeter)
 
@@ -86,7 +93,7 @@ func GetWaterMeter(c echo.Context) error {
 		return utilities.R400(c, err.Error())
 	}
 
-	numberDetected, err := services.SubmitWaterMeter(*file, roomID)
+	numberDetected, err := services.DetectWaterMeter(*file, roomID)
 
 	if err != nil {
 		fmt.Println("[GetWaterMeter][detection service]: ", err.Error())
@@ -97,7 +104,15 @@ func GetWaterMeter(c echo.Context) error {
 }
 
 func GetBills(c echo.Context) error {
-	return nil
+	ID := c.Param("id")
+	roomID := utilities.ParseStringToUuid(ID)
+
+	err := services.GetBills(roomID)
+	if err != nil {
+		return utilities.R400(c, err.Error())
+	}
+
+	return utilities.R200(c, "data")
 }
 
 func DuplicateRoom(c echo.Context) error {
@@ -110,4 +125,48 @@ func DuplicateRoom(c echo.Context) error {
 	}
 
 	return utilities.R200(c, duplicatedRoom)
+}
+
+func ConfirmWaterMeter(c echo.Context) error {
+	ID := c.Param("id")
+	roomID := utilities.ParseStringToUuid(ID)
+
+	waterMeterNumber := new(modelRequest.SubmitWaterMeterNumber)
+
+	if err := c.Bind(waterMeterNumber); err != nil {
+		fmt.Println("[ConfirmWaterMeter][Bind body]: ", err.Error())
+		return utilities.R400(c, err.Error())
+	}
+
+	err := services.ConfirmWaterMeter(roomID, waterMeterNumber.WaterMeter)
+
+	if err != nil {
+		return utilities.R400(c, err.Error())
+	}
+
+	return utilities.R200(c, "Submitted Successfully!!")
+}
+
+func CheckSubmittedWaterMeter(c echo.Context) error {
+	ID := c.Param("id")
+	roomID := utilities.ParseStringToUuid(ID)
+	isSubmitted, err := services.CheckSubmittedWaterMeter(roomID)
+
+	if err != nil {
+		return utilities.R400(c, err.Error())
+	}
+
+	return utilities.R200(c, isSubmitted)
+}
+
+func GetHistorySubmitted(c echo.Context) error {
+	ID := c.Param("id")
+	roomID := utilities.ParseStringToUuid(ID)
+	histories, err := services.GetHistorySubmitted(roomID)
+
+	if err != nil {
+		return utilities.R400(c, err.Error())
+	}
+
+	return utilities.R200(c, histories)
 }

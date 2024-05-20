@@ -32,4 +32,8 @@ type (
 		MaxPeople     int8   `json:"maxPeople"`
 		CurrentPeople int8   `json:"currentPeople"`
 	}
+
+	SubmitWaterMeterNumber struct {
+		WaterMeter string `json:"waterMeter"`
+	}
 )

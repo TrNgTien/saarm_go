@@ -1,11 +1,26 @@
 package modelResponse
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type (
 	RoomResponse struct {
-		ID   uuid.UUID `json:"id"`
-		Name string    `json:"name"`
+		ID            uuid.UUID `json:"id"`
+		Name          string    `json:"roomName"`
+		Status        string    `json:"roomStatus"`
+		RoomPrice     string    `json:"roomPrice"`
+		ApartmentName string    `json:"apartmentName"`
+		Address       string    `json:"apartmentAddress"`
+	}
+
+	HistorySubmitResponse struct {
+		ID           uuid.UUID `json:"id"`
+		CreatedAt    time.Time `json:"createdAt"`
+		WaterNumber  string    `json:"waterMeter"`
+		WaterConsume int16     `json:"waterConsume"`
 	}
 	DuplicateRoomResponse struct {
 		ID uuid.UUID `json:"id"`

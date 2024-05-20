@@ -11,9 +11,11 @@ import (
 func RoomGroupRoutes(g *echo.Group) {
 	rGroup := g.Group(common.ROOM_PATH)
 
-	// roomGroup.POST(":id", controllers.GetWaterMeter)
-	rGroup.GET("/:id/bills", controllers.GetBills)
-	rGroup.POST("/:id/water-meter", controllers.GetWaterMeter)
+	rGroup.GET("/:id", controllers.GetRoomByID)
+	rGroup.GET("/:id/water-meters/histories", controllers.GetHistorySubmitted)
+	rGroup.GET("/:id/water-meters/is-submitted", controllers.CheckSubmittedWaterMeter)
+	rGroup.POST("/:id/water-meters/detect", controllers.DetectWaterMeter)
+	rGroup.POST("/:id/water-meters/submit", controllers.ConfirmWaterMeter)
 
 	rGroup.POST("", controllers.CreateRoom, middlewares.LandlordPermission)
 	rGroup.POST("/:id/duplicate", controllers.DuplicateRoom, middlewares.LandlordPermission)

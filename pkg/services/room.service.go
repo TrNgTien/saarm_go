@@ -63,7 +63,7 @@ func saveFileSystem(file, roomID string, fileChan chan string) {
 	fileChan <- outputFileName
 }
 
-func SubmitWaterMeter(file common.UploadWaterMeter, roomID string) ([]string, error) {
+func DetectWaterMeter(file common.UploadWaterMeter, roomID string) ([]string, error) {
 	var numbersDetected []string
 	fileChan := make(chan string)
 
@@ -130,14 +130,20 @@ func GetRooms() error {
 	return nil
 }
 
-func GetRoomByID(roomID uuid.UUID) error {
-	var room modelResponse.AparmentResponse
+func GetRoomByID(roomID uuid.UUID) (modelResponse.RoomResponse, error) {
+	var room modelResponse.RoomResponse
 
-	pg.DB.Raw("SELECT * FROM rooms WHERE id = ?", roomID).Scan(&room)
-	return nil
+	err := pg.DB.Raw("SELECT r.id, r.name, r.room_price, r.status, a.name \"apartmentName\", a.address FROM rooms r INNER JOIN apartments a ON a.id = r.apartment_id AND r.id = ?", roomID).Scan(&room)
+
+	if err.Error != nil {
+		return modelResponse.RoomResponse{}, err.Error
+	}
+
+	return room, nil
 }
 
-func GetBills() error {
+func GetBills(roomID uuid.UUID) error {
+
 	return nil
 }
 
@@ -159,7 +165,88 @@ func DuplicateRoom(roomID uuid.UUID) (modelResponse.DuplicateRoomResponse, error
 	return modelResponse.DuplicateRoomResponse{ID: room.ID}, nil
 }
 
-// func SubmitWaterMeterRecord () error{
-//   var waterMeterNumber string
-//   return nil
-// }
+func CheckSubmittedWaterMeter(roomID uuid.UUID) (bool, error) {
+	var isSubmitted int8
+
+	isSubmittedErr := pg.DB.Raw("SELECT COUNT(*) FROM monthly_bill_logs WHERE room_id = ? AND created_at >= DATE_TRUNC('month', CURRENT_DATE)  AND created_at < DATE_TRUNC('month', CURRENT_DATE + interval '1 month')", roomID).Scan(&isSubmitted)
+
+	if isSubmittedErr.Error != nil {
+
+		return false, isSubmittedErr.Error
+	}
+
+	return isSubmitted > 0, nil
+}
+
+func ConfirmWaterMeter(roomID uuid.UUID, waterMeterNumber string) error {
+	var waterNumberLatest string
+
+	err := pg.DB.Raw("SELECT water_number from monthly_bill_logs WHERE room_id = ? ORDER BY created_at DESC LIMIT 1", roomID).Scan(&waterNumberLatest).Error
+
+	if err != nil {
+		return err
+	}
+
+	oldWater := "0"
+	var diffConsume int
+
+	if waterNumberLatest != "" {
+		oldWater = waterNumberLatest[:4]
+	}
+
+	newWater := waterMeterNumber[:4]
+
+	oldWaterMeter, err := utilities.GetIntValue(oldWater)
+
+	if err != nil {
+		return err
+	}
+
+	newWaterMeter, err := utilities.GetIntValue(newWater)
+
+	if err != nil {
+		return err
+	}
+
+	diffConsume = newWaterMeter - oldWaterMeter
+
+	monthlyLogs := models.MonthlyBillLogs{
+		RoomID:       roomID,
+		WaterNumber:  waterMeterNumber,
+		WaterConsume: diffConsume,
+	}
+
+	monthlyLogErr := pg.DB.Create(&monthlyLogs).Error
+
+	if monthlyLogErr != nil {
+		return monthlyLogErr
+	}
+
+	return nil
+}
+
+func GetHistorySubmitted(roomID uuid.UUID) ([]modelResponse.HistorySubmitResponse, error) {
+	var histories []modelResponse.HistorySubmitResponse
+
+	rows, err := pg.DB.Raw("select id, created_at, water_number, water_consume from monthly_bill_logs where room_id = ? ORDER BY created_at DESC LIMIT 50 OFFSET 0", roomID).Rows()
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var log modelResponse.HistorySubmitResponse
+
+		err := rows.Scan(&log.ID, &log.CreatedAt, &log.WaterNumber, &log.WaterConsume)
+
+		if err != nil {
+			return nil, err
+		}
+
+		histories = append(histories, log)
+	}
+
+	return histories, nil
+}
