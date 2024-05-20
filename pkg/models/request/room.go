@@ -1,6 +1,9 @@
 package modelRequest
 
-import "github.com/google/uuid"
+import (
+
+	"github.com/google/uuid"
+)
 
 type (
 	NewRoom struct {
@@ -35,5 +38,9 @@ type (
 
 	SubmitWaterMeterNumber struct {
 		WaterMeter string `json:"waterMeter"`
+	}
+
+	GetBillByRoom struct {
+		MonthRequest string `json:"monthRequest"`
 	}
 )

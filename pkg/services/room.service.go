@@ -142,9 +142,29 @@ func GetRoomByID(roomID uuid.UUID) (modelResponse.RoomResponse, error) {
 	return room, nil
 }
 
-func GetBills(roomID uuid.UUID) error {
+func GetBillByRoom(roomID uuid.UUID, monthReq string) (modelResponse.BillByRoomResponse, error) {
+	var billRoom modelResponse.BillByRoomResponse
 
-	return nil
+	query := fmt.Sprintf(`SELECT m.id, m.created_at, water_consume, electricity_consume, extra_fee, r.room_price
+     FROM monthly_bill_logs as m 
+     INNER JOIN rooms as r on r.id = m.room_id AND m.room_id = '%s'
+     AND m.created_at >= date_trunc('month', timestamp with time zone '%s')
+     AND m.created_at < date_trunc('month', timestamp with time zone '%s' + interval '1 month')
+     LIMIT 1
+  `,
+		roomID, monthReq, monthReq)
+
+	err := pg.DB.Raw(query).Scan(&billRoom)
+
+	if err.Error != nil {
+		return modelResponse.BillByRoomResponse{}, err.Error
+	}
+
+	return billRoom, nil
+}
+
+func GetBills() (modelResponse.RoomResponse, error) {
+	return modelResponse.RoomResponse{}, nil
 }
 
 func DuplicateRoom(roomID uuid.UUID) (modelResponse.DuplicateRoomResponse, error) {

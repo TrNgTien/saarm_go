@@ -7,11 +7,13 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
-func InitCron() {
+func InitCron() error {
 	c := cron.New()
 
 	fmt.Println("START CRON JOB.......")
-	c.AddFunc("@midnight", func() {
+
+	// Run cronjob every midnight
+	c.AddFunc("0 0 * * *", func() {
 		fmt.Println("START | Clean resource every midnight........")
 
 		if err := utilities.RemoveAllAssets(); err != nil {
@@ -23,4 +25,9 @@ func InitCron() {
 	})
 
 	c.Start()
+
+	// keep job run until server is off
+	// var forever chan struct{}
+	// <-forever
+	return nil
 }

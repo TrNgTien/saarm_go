@@ -12,6 +12,8 @@ func RoomGroupRoutes(g *echo.Group) {
 	rGroup := g.Group(common.ROOM_PATH)
 
 	rGroup.GET("/:id", controllers.GetRoomByID)
+	rGroup.GET("/bills", controllers.GetBills)
+	rGroup.GET("/:id/bills", controllers.GetBillByRoom)
 	rGroup.GET("/:id/water-meters/histories", controllers.GetHistorySubmitted)
 	rGroup.GET("/:id/water-meters/is-submitted", controllers.CheckSubmittedWaterMeter)
 	rGroup.POST("/:id/water-meters/detect", controllers.DetectWaterMeter)

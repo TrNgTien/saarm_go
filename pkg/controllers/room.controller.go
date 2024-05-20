@@ -103,16 +103,29 @@ func DetectWaterMeter(c echo.Context) error {
 	return utilities.R200(c, numberDetected)
 }
 
-func GetBills(c echo.Context) error {
+func GetBillByRoom(c echo.Context) error {
 	ID := c.Param("id")
 	roomID := utilities.ParseStringToUuid(ID)
+  monthRequest := c.QueryParam("monthRequest")
 
-	err := services.GetBills(roomID)
+	data, err := services.GetBillByRoom(roomID, monthRequest)
+
 	if err != nil {
 		return utilities.R400(c, err.Error())
 	}
 
-	return utilities.R200(c, "data")
+	return utilities.R200(c, data)
+}
+
+func GetBills(c echo.Context) error {
+
+	data, err := services.GetBills()
+
+	if err != nil {
+		return utilities.R400(c, err.Error())
+	}
+
+	return utilities.R200(c, data)
 }
 
 func DuplicateRoom(c echo.Context) error {
