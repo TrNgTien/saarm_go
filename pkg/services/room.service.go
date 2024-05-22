@@ -188,7 +188,7 @@ func DuplicateRoom(roomID uuid.UUID) (modelResponse.DuplicateRoomResponse, error
 func CheckSubmittedWaterMeter(roomID uuid.UUID) (bool, error) {
 	var isSubmitted int8
 
-	isSubmittedErr := pg.DB.Raw("SELECT COUNT(*) FROM monthly_bill_logs WHERE room_id = ? AND created_at >= DATE_TRUNC('month', CURRENT_DATE)  AND created_at < DATE_TRUNC('month', CURRENT_DATE + interval '1 month')", roomID).Scan(&isSubmitted)
+	isSubmittedErr := pg.DB.Raw("SELECT COUNT(*) FROM monthly_bill_logs WHERE room_id = ? AND created_at >= DATE_TRUNC('month', CURRENT_DATE) AND created_at < DATE_TRUNC('month', CURRENT_DATE + interval '1 month')", roomID).Scan(&isSubmitted)
 
 	if isSubmittedErr.Error != nil {
 
