@@ -1,6 +1,7 @@
 package models
 
 import (
+	"saarm/pkg/base"
 	"time"
 
 	"github.com/google/uuid"
@@ -8,23 +9,20 @@ import (
 )
 
 type Apartment struct {
-	CreatedAt time.Time  `json:"created_at"`
-	ModifiedAt time.Time  `json:"modified_at"`
-	ID   uuid.UUID 	`gorm:"type:uuid;default:uuid_generate_v4()"`
-	Name string    `json:"name"`
+	base.BaseModel
+	Name          string    `json:"name"`
+	LocationUrl   string    `json:"locationUrl"`
+	Address       string    `json:"address"`
+	TotalRoom     int16     `json:"totalRoom"`
+	RoomAvailable int16     `json:"roomAvailable"`
+	Status        string    `json:"status" gorm:"type:string;default:100_ACTIVATED"`
+	UserID        uuid.UUID `json:"userId"`
+	User          User      `gorm:"foreignKey:UserID"`
 }
 
 func (m *Apartment) BeforeCreate(tx *gorm.DB) (err error) {
-  m.ID = uuid.New()
-  m.CreatedAt = time.Now()
-  m.ModifiedAt = time.Now()
-  return
-}
-
-type AparmentResponse struct {
-  ID   uuid.UUID 	`json:"id"`
-	CreatedAt time.Time  `json:"createdAt"`
-	ModifiedAt time.Time  `json:"modifiedAt"`
-	LastLoginAt time.Time  `json:"lastLoginAt"`
-	Email string    `json:"email"`
+	m.ID = uuid.New()
+	m.CreatedAt = time.Now()
+	m.ModifiedAt = time.Now()
+	return
 }

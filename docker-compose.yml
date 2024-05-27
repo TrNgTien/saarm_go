@@ -1,45 +1,66 @@
-version: '3'
+version: "3"
 
 networks:
   saarm-network:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.28.0.0/16
+        - subnet: ${DOCKER_SUBNET}
 
 services:
-  saarm_db:
-    image: 'bitnami/postgresql:16'
-    container_name: saarm_db
+  saarm_minio:
+    image: "bitnami/minio:2024.4.6"
+    container_name: ${MINIO_CONTAINER_NAME}
     restart: always
     ports:
-      - 5400:5432
+      - ${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}
+      - ${MINIO_SERVER_PORT}:${MINIO_SERVER_PORT}
     environment:
-      - POSTGRESQL_HOST=172.28.0.1
-      - POSTGRESQL_USERNAME=tientran
-      - POSTGRESQL_PASSWORD=tien123@
-      - POSTGRESQL_DATABASE=saarm_db
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - MINIO_SERVER_ACCESS_KEY=${MINIO_SERVER_ACCESS_KEY}
+      - MINIO_SERVER_SECRET_KEY=${MINIO_SERVER_SECRET_KEY}
     volumes:
-      - ./volumes/:/bitnami/postgresql
+      - ./volumes/minio-data:/bitnami/minio/data
+    networks:
+      - saarm-network
+
+  saarm_db:
+    image: "bitnami/postgresql:16"
+    container_name: ${POSTGRES_CONTAINER_NAME}
+    restart: always
+    ports:
+      - ${POSTGRES_PORT}:5432
+    environment:
+      - POSTGRESQL_USERNAME=${POSTGRES_USERNAME}
+      - POSTGRESQL_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRESQL_DATABASE=${POSTGRES_DATABASE}
+    volumes:
+      - ./volumes/pg-data:/bitnami/postgresql
       - /etc/localtime:/etc/localtime:ro
     networks:
       - saarm-network
 
   saarm_go:
-    image: 'golang:1.21.5-alpine'
+    image: "golang:1.21.5-alpine"
     container_name: saarm_go
     working_dir: /app
-    entrypoint: ['sh', './start.sh']
+    entrypoint: ["sh", "./start.sh"]
     restart: always
     ports:
-      - 8000:8000
+      - ${APP_ENV_HOST}:8000
     environment:
-      - APP_ENV_POSTGRESQL_HOST=172.28.0.1
-      - APP_ENV_POSTGRESQL_PORT=5400
-      - APP_ENV_POSTGRESQL_USERNAME=tientran
-      - APP_ENV_POSTGRESQL_PASSWORD=tien123@
-      - APP_ENV_POSTGRESQL_DATABASE=saarm_db
+      - APP_ENV_POSTGRESQL_HOST=${APP_ENV_POSTGRESQL_HOST}
+      - APP_ENV_SECRET_KEY=${APP_ENV_SECRET_KEY}
+      - APP_ENV_POSTGRESQL_PORT=${APP_ENV_POSTGRESQL_PORT}
+      - APP_ENV_POSTGRESQL_USERNAME=${APP_ENV_POSTGRESQL_USERNAME}
+      - APP_ENV_POSTGRESQL_PASSWORD=${APP_ENV_POSTGRESQL_PASSWORD}
+      - APP_ENV_POSTGRESQL_DATABASE=${APP_ENV_POSTGRESQL_DATABASE}
+      - APP_ENV_MINIO_ENDPOINT=${APP_ENV_MINIO_ENDPOINT}
+      - APP_ENV_MINIO_ACCESS_KEY=${APP_ENV_MINIO_ACCESS_KEY}
+      - APP_ENV_MINIO_SECRET_KEY=${APP_ENV_MINIO_SECRET_KEY}
     volumes:
       - .:/app
+      - /opt/google-cloud/service-account.json:/opt/google-cloud/service-account.json
     networks:
       - saarm-network

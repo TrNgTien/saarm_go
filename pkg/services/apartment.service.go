@@ -1,54 +1,100 @@
 package services
 
 import (
+	"errors"
 	"saarm/modules/pg"
+	"saarm/pkg/common"
 	"saarm/pkg/models"
-	"saarm/pkg/repositories"
-	"saarm/pkg/utilities"
+	modelRequest "saarm/pkg/models/request"
+	modelReponses "saarm/pkg/models/response"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
-func GetAparments(c echo.Context) error {
-  limit, offset, page := c.QueryParam("limit"), c.QueryParam("offset"), c.QueryParam("page")
+func CreateApartments(apartment modelRequest.NewApartment) (modelReponses.AparmentResponse, error) {
+	newApartment := models.Apartment{
+		Name:          apartment.Name,
+		LocationUrl:   apartment.LocationUrl,
+		Address:       apartment.Address,
+		TotalRoom:     apartment.TotalRoom,
+		RoomAvailable: apartment.RoomAvailable,
+		UserID:        apartment.UserID,
+	}
 
-  users := repositories.AparmentRepo(pg.DB).FindAllAparments(repositories.PaginationQuery{
-    Limit: utilities.GetIntValue(limit),
-    Offset: utilities.GetIntValue(offset),
-    Page: utilities.GetIntValue(page),
-  })
+	err := pg.DB.Create(&newApartment).Error
 
-  return utilities.R200(c, users)
+	if err != nil {
+		return modelReponses.AparmentResponse{}, errors.New(err.Error())
+	}
+
+	return modelReponses.AparmentResponse{
+		ID:            newApartment.ID,
+		Name:          newApartment.Name,
+		LocationUrl:   newApartment.LocationUrl,
+		Address:       newApartment.Address,
+		TotalRoom:     newApartment.TotalRoom,
+		RoomAvailable: newApartment.RoomAvailable,
+	}, nil
 }
 
-func GetAparmentByID(id int) models.AparmentResponse {
-  return repositories.AparmentRepo(pg.DB).FindAparmentByID(id)
+func GetApartments(query common.PaginationQuery) ([]modelReponses.AparmentResponse, error) {
+	var apartments []modelReponses.AparmentResponse
+
+	rows, err := pg.DB.Raw("SELECT id, name, location_url, address, total_room, room_available FROM apartments ORDER BY created_at DESC LIMIT ? OFFSET ?", query.Limit, query.Offset).Rows()
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var apartment modelReponses.AparmentResponse
+
+		err := rows.Scan(&apartment.ID, &apartment.Name, &apartment.LocationUrl, &apartment.Address, &apartment.TotalRoom, &apartment.RoomAvailable)
+
+		if err != nil {
+			return nil, err
+		}
+
+		apartments = append(apartments, apartment)
+	}
+	return apartments, nil
+
+}
+
+func GetAparmentByID(id uuid.UUID) (modelReponses.AparmentResponse, error) {
+	var apartment modelReponses.AparmentResponse
+
+	pg.DB.Raw("SELECT id, name, location_url, address, total_room, room_available FROM apartments WHERE id = ?", id).Scan(&apartment)
+
+	return modelReponses.AparmentResponse{ID: apartment.ID, Name: apartment.Name, Address: apartment.Address, LocationUrl: apartment.LocationUrl, TotalRoom: apartment.TotalRoom, RoomAvailable: apartment.RoomAvailable}, nil
 }
 
 func PatchAparment(c echo.Context) error {
-  return c.JSON(200, echo.Map{
-    "success": true,
-    "data": "users",
-  })
+	return c.JSON(200, echo.Map{
+		"success": true,
+		"data":    "users",
+	})
 }
 
 func PutAparments(c echo.Context) error {
-  return c.JSON(200, echo.Map{
-    "success": true,
-    "data": "users",
-  })
+	return c.JSON(200, echo.Map{
+		"success": true,
+		"data":    "users",
+	})
 }
 
 func DeleteAparmentByID(c echo.Context) error {
-  return c.JSON(200, echo.Map{
-    "success": true,
-    "data": "users",
-  })
+	return c.JSON(200, echo.Map{
+		"success": true,
+		"data":    "users",
+	})
 }
 
 func DeleteAparments(c echo.Context) error {
-  return c.JSON(200, echo.Map{
-    "success": true,
-    "data": "users",
-  })
+	return c.JSON(200, echo.Map{
+		"success": true,
+		"data":    "users",
+	})
 }

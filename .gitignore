@@ -7,6 +7,8 @@ volumes
 *.exe       # Executables
 *.test      # Test binaries (built with `go test -c`)
 
+.DS_Store
+
 # Output files
 *.out       # Generic output files
 *.cov      # Coverage output (e.g., from `go test -coverprofile`)
@@ -39,6 +41,7 @@ tmp/        # Temporary files
 
 # Environment files
 .env        # Development environment variables (consider using a `.env.example` for placeholders)
+.env.prod
 
 # Credentials
 credentials.json  # Example; adjust the filename for your project
@@ -46,3 +49,8 @@ credentials.json  # Example; adjust the filename for your project
 # Specific to your project (add as needed)
 # For example, if you generate sensitive API keys:
 api_keys.json
+
+assets/water-meter/*.png
+assets/water-meter/*.jpg
+assets/water-meter/*.jpeg
+assets/water-meter/*.webp
