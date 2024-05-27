@@ -19,7 +19,7 @@ func CreateApartments(apartment modelRequest.NewApartment) (modelReponses.Aparme
 		Address:       apartment.Address,
 		TotalRoom:     apartment.TotalRoom,
 		RoomAvailable: apartment.RoomAvailable,
-    UserID: apartment.UserID,
+		UserID:        apartment.UserID,
 	}
 
 	err := pg.DB.Create(&newApartment).Error
