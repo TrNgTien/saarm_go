@@ -24,6 +24,9 @@ jobs:
             git checkout develop
 
             # build project
+            echo "Restart all server instances"
             docker restart saarm_go
+
+            docker restart saarm_go_2
 
             echo "DONE"
