@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"saarm/pkg/common"
 	modelRequests "saarm/pkg/models/request"
 	"saarm/pkg/services"
@@ -17,7 +16,7 @@ func CreateApartments(c echo.Context) error {
 		return utilities.R400(c, err.Error())
 	}
 
-  userID := c.Get("userID").(string)
+	userID := c.Get("userID").(string)
 
 	apartment := modelRequests.NewApartment{
 		Name:          a.Name,
@@ -25,7 +24,7 @@ func CreateApartments(c echo.Context) error {
 		Address:       a.Address,
 		TotalRoom:     a.TotalRoom,
 		RoomAvailable: a.RoomAvailable,
-    UserID: utilities.ParseStringToUuid(userID),
+		UserID:        utilities.ParseStringToUuid(userID),
 	}
 
 	apartmentCreated, err := services.CreateApartments(apartment)
@@ -67,7 +66,6 @@ func GetApartments(c echo.Context) error {
 		Page:   pageInt,
 	}
 
-	fmt.Println("[GetAparments] runign here")
 	apartments, err := services.GetApartments(queryData)
 
 	if err != nil {
