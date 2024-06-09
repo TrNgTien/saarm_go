@@ -28,6 +28,7 @@ func saveFileSystem(file, roomID string, fileChan chan string) {
 	}
 
 	parts := strings.SplitN(file, ";", 2)
+
 	var fileType string
 
 	if len(parts) != 2 {
@@ -71,6 +72,8 @@ func DetectWaterMeter(file common.UploadWaterMeter, roomID string) ([]string, er
 	go saveFileSystem(file.OriginalFile, roomID, fileChan)
 
 	fileCropped, fileOriginal := <-fileChan, <-fileChan
+
+  close(fileChan)
 
 	IMAGE_WATER_METER_PATH := utilities.GetFilePath(common.WATER_METER_PATH, fileCropped)
 	ORIGINAL_WATER_METER_PATH := utilities.GetFilePath(common.WATER_METER_PATH, fileOriginal)
@@ -133,7 +136,7 @@ func GetRooms() error {
 func GetRoomByID(roomID uuid.UUID) (modelResponse.RoomResponse, error) {
 	var room modelResponse.RoomResponse
 
-	err := pg.DB.Raw("SELECT r.id, r.name, r.room_price, r.status, a.name \"apartmentName\", a.address FROM rooms r INNER JOIN apartments a ON a.id = r.apartment_id AND r.id = ?", roomID).Scan(&room)
+	err := pg.DB.Raw("SELECT r.id, r.name, r.room_price, r.status, a.name \"ApartmentName\", a.address FROM rooms r INNER JOIN apartments a ON a.id = r.apartment_id AND r.id = ?", roomID).Scan(&room)
 
 	if err.Error != nil {
 		return modelResponse.RoomResponse{}, err.Error
@@ -145,16 +148,15 @@ func GetRoomByID(roomID uuid.UUID) (modelResponse.RoomResponse, error) {
 func GetBillByRoom(roomID uuid.UUID, monthReq string) (modelResponse.BillByRoomResponse, error) {
 	var billRoom modelResponse.BillByRoomResponse
 
-	query := fmt.Sprintf(`SELECT m.id, m.created_at, water_consume, electricity_consume, extra_fee, r.room_price
-     FROM monthly_bill_logs as m 
+	q:= fmt.Sprintf(`SELECT m.id, m.created_at, water_consume, electricity_consume, extra_fee, r.room_price
+     FROM monthly_bill_logs as m
      INNER JOIN rooms as r on r.id = m.room_id AND m.room_id = '%s'
      AND m.created_at >= date_trunc('month', timestamp with time zone '%s')
      AND m.created_at < date_trunc('month', timestamp with time zone '%s' + interval '1 month')
-     LIMIT 1
-  `,
+     LIMIT 1`,
 		roomID, monthReq, monthReq)
 
-	err := pg.DB.Raw(query).Scan(&billRoom)
+	err := pg.DB.Raw(q).Scan(&billRoom)
 
 	if err.Error != nil {
 		return modelResponse.BillByRoomResponse{}, err.Error

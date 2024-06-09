@@ -1,4 +1,4 @@
-export APP_ENV_SECRET_KEY=secret-key
+# export APP_ENV_SECRET_KEY=secret-key
 # export APP_ENV_POSTGRESQL_HOST=local_home
 # export APP_ENV_POSTGRES_PORT=5400
 # export APP_ENV_POSTGRES_USERNAME=tientran
@@ -9,8 +9,10 @@ export APP_ENV_SECRET_KEY=secret-key
 # export APP_ENV_MINIO_ACCESS_KEY=minio-root
 # export APP_ENV_MINIO_SECRET_KEY=tien19217
 
-server:
+.PHONY: run
+run:
 	go run cmd/main.go
+
 swagger:
 	swag init -g cmd/main.go \
 	--exclude ./internal/ \
