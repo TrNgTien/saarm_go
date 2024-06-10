@@ -15,16 +15,15 @@ func GetUsers(c echo.Context) error {
 
 func GetUserByID(c echo.Context) error {
 	id := c.Param("id")
-	i, err := utilities.GetIntValue(id)
+	userID := utilities.ParseStringToUuid(id)
+
+	user, err := services.GetUserByID(userID)
+
 	if err != nil {
-
 		return utilities.R400(c, err.Error())
-
 	}
 
-	rs := services.GetUserByID(i)
-
-	return utilities.R200(c, rs)
+	return utilities.R200(c, user)
 }
 
 func CreateUser(c echo.Context) error {

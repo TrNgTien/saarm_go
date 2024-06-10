@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"saarm/pkg/common"
 	modelRequests "saarm/pkg/models/request"
 	"saarm/pkg/services"
 	"saarm/pkg/utilities"
@@ -37,39 +36,13 @@ func CreateApartments(c echo.Context) error {
 }
 
 func GetApartments(c echo.Context) error {
-	limit, offset, page := c.QueryParam("limit"), c.QueryParam("offset"), c.QueryParam("page")
-	if limit == "" || offset == "" || page == "" {
-		return utilities.R400(c, "[GetAparments] TODO Paging!")
-	}
+	userID := c.Get("userID").(string)
+	ID := utilities.ParseStringToUuid(userID)
 
-	limitInt, err := utilities.GetIntValue(limit)
+	apartments, err := services.GetApartments(ID)
 
 	if err != nil {
-		return err
-	}
-
-	offsetInt, err := utilities.GetIntValue(offset)
-
-	if err != nil {
-		return err
-	}
-
-	pageInt, err := utilities.GetIntValue(page)
-
-	if err != nil {
-		return err
-	}
-
-	queryData := common.PaginationQuery{
-		Limit:  limitInt,
-		Offset: offsetInt,
-		Page:   pageInt,
-	}
-
-	apartments, err := services.GetApartments(queryData)
-
-	if err != nil {
-		return utilities.R400(c, "[GetAparments] Cannot get apartments!")
+		return utilities.R400(c, err.Error())
 	}
 
 	return utilities.R200(c, apartments)
@@ -78,7 +51,7 @@ func GetApartments(c echo.Context) error {
 func GetApartmentByID(c echo.Context) error {
 	ID := c.Param("id")
 	apartmentId := utilities.ParseStringToUuid(ID)
-	apartment, err := services.GetAparmentByID(apartmentId)
+	apartment, err := services.GetApartmentByID(apartmentId)
 
 	if err != nil {
 		return utilities.R400(c, "[GetAparments] Cannot get apartment!")

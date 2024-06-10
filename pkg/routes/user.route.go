@@ -10,9 +10,11 @@ import (
 
 func UserGroupRoutes(g *echo.Group) {
 	uGroup := g.Group(common.USER_PATH, middlewares.AdminPermission)
+	homeownerGroup := g.Group(common.USER_PATH, middlewares.HomeownerPermission)
 
 	uGroup.GET("", controllers.GetUsers)
-	uGroup.GET("/:id", controllers.GetUserByID)
+
+	homeownerGroup.GET("/:id", controllers.GetUserByID)
 
 	uGroup.POST("", controllers.CreateUser)
 

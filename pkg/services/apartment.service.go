@@ -2,8 +2,8 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"saarm/modules/pg"
-	"saarm/pkg/common"
 	"saarm/pkg/models"
 	modelRequest "saarm/pkg/models/request"
 	modelReponses "saarm/pkg/models/response"
@@ -38,10 +38,15 @@ func CreateApartments(apartment modelRequest.NewApartment) (modelReponses.Aparme
 	}, nil
 }
 
-func GetApartments(query common.PaginationQuery) ([]modelReponses.AparmentResponse, error) {
+func GetApartments(userID uuid.UUID) ([]modelReponses.AparmentResponse, error) {
 	var apartments []modelReponses.AparmentResponse
 
-	rows, err := pg.DB.Raw("SELECT id, name, location_url, address, total_room, room_available FROM apartments ORDER BY created_at DESC LIMIT ? OFFSET ?", query.Limit, query.Offset).Rows()
+	q := fmt.Sprintf(`
+  SELECT a.id, a.name, a.address, a.total_room, a.room_available
+  FROM users u
+  INNER JOIN apartments a ON a.user_id = u.id and u.id = '%s'`, userID)
+
+	rows, err := pg.DB.Raw(q).Rows()
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +56,7 @@ func GetApartments(query common.PaginationQuery) ([]modelReponses.AparmentRespon
 	for rows.Next() {
 		var apartment modelReponses.AparmentResponse
 
-		err := rows.Scan(&apartment.ID, &apartment.Name, &apartment.LocationUrl, &apartment.Address, &apartment.TotalRoom, &apartment.RoomAvailable)
+		err := rows.Scan(&apartment.ID, &apartment.Name, &apartment.Address, &apartment.TotalRoom, &apartment.RoomAvailable)
 
 		if err != nil {
 			return nil, err
@@ -63,7 +68,7 @@ func GetApartments(query common.PaginationQuery) ([]modelReponses.AparmentRespon
 
 }
 
-func GetAparmentByID(id uuid.UUID) (modelReponses.AparmentResponse, error) {
+func GetApartmentByID(id uuid.UUID) (modelReponses.AparmentResponse, error) {
 	var apartment modelReponses.AparmentResponse
 
 	pg.DB.Raw("SELECT id, name, location_url, address, total_room, room_available FROM apartments WHERE id = ?", id).Scan(&apartment)

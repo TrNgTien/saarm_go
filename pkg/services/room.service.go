@@ -73,7 +73,7 @@ func DetectWaterMeter(file common.UploadWaterMeter, roomID string) ([]string, er
 
 	fileCropped, fileOriginal := <-fileChan, <-fileChan
 
-  close(fileChan)
+	close(fileChan)
 
 	IMAGE_WATER_METER_PATH := utilities.GetFilePath(common.WATER_METER_PATH, fileCropped)
 	ORIGINAL_WATER_METER_PATH := utilities.GetFilePath(common.WATER_METER_PATH, fileOriginal)
@@ -129,7 +129,6 @@ func CreateRoom(room modelRequest.NewRoom) (modelResponse.RoomResponse, error) {
 }
 
 func GetRooms() error {
-
 	return nil
 }
 
@@ -148,7 +147,7 @@ func GetRoomByID(roomID uuid.UUID) (modelResponse.RoomResponse, error) {
 func GetBillByRoom(roomID uuid.UUID, monthReq string) (modelResponse.BillByRoomResponse, error) {
 	var billRoom modelResponse.BillByRoomResponse
 
-	q:= fmt.Sprintf(`SELECT m.id, m.created_at, water_consume, electricity_consume, extra_fee, r.room_price
+	q := fmt.Sprintf(`SELECT m.id, m.created_at, water_consume, electricity_consume, extra_fee, r.room_price
      FROM monthly_bill_logs as m
      INNER JOIN rooms as r on r.id = m.room_id AND m.room_id = '%s'
      AND m.created_at >= date_trunc('month', timestamp with time zone '%s')

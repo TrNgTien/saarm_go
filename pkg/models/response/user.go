@@ -11,7 +11,9 @@ type (
 		ID          uuid.UUID `gorm:"type:uuid;default:gen_random_uuid()"`
 		Email       string    `json:"email"`
 		Status      string    `json:"status" gorm:"type:string;default:100_ACTIVATED"`
-		ApartmentID uuid.UUID `json:"apartmentID"`
+		ApartmentName string    `json:"apartmentName"`
+		Address     string    `json:"apartmentAddress"`
+		LastLoginAt string    `json:"lastLoginAt"`
 	}
 
 	AuthResponse struct {

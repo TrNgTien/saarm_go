@@ -70,7 +70,6 @@ func DeleteBucket(bucketName string) (err error) {
 }
 
 func UploadObject(bucketName string, objectName string, filePath string) (int64, error) {
-
 	contentType := "application/octet-stream"
 
 	info, err := minio.GetClient().FPutObject(bucketName, objectName, filePath, min.PutObjectOptions{ContentType: contentType})
@@ -81,4 +80,9 @@ func UploadObject(bucketName string, objectName string, filePath string) (int64,
 
 	log.Printf("Successfully uploaded %s of size %d\n", objectName, info)
 	return info, nil
+}
+
+func UploadObjectV2(bucketName string, objectName string, filePath string) error {
+  //TODO: implement with minio
+	return nil
 }

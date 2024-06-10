@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"saarm/modules/pg"
 	"saarm/pkg/helpers"
 	modelRequest "saarm/pkg/models/request"
@@ -61,9 +62,22 @@ func GetUsers(c echo.Context) error {
 	return utilities.R200(c, "users")
 }
 
-func GetUserByID(id int) error {
-	return nil
-	// return repositories.UserRepo(pg.DB).FindUserByID(id)
+func GetUserByID(id uuid.UUID) (modelResponse.UserResponse, error) {
+
+	var user modelResponse.UserResponse
+
+	q := fmt.Sprintf(`
+  SELECT u.id, u.last_login_at, u.status, a.name "ApartmentName", a.address
+  FROM users u
+  INNER JOIN apartments a ON a.user_id = u.id and u.id = '%s'`, id)
+
+	err := pg.DB.Raw(q).Scan(&user)
+
+	if err.Error != nil {
+		return modelResponse.UserResponse{}, err.Error
+	}
+
+	return user, nil
 }
 
 func PatchUser(userID uuid.UUID, req modelRequest.UpdateUserRequest) error {
