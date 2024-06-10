@@ -11,6 +11,8 @@ import (
 type MetaLink struct {
 	base.BaseModel
 	Name string `json:"name"`
+	RoomID        uuid.UUID `json:"roomId"`
+	Room          Room      `gorm:"foreignKey:RoomID"`
 }
 
 func (m *MetaLink) BeforeCreate(tx *gorm.DB) (err error) {
