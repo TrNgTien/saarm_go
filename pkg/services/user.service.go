@@ -28,7 +28,7 @@ func IsExistedUser(user modelRequest.SignUpRequest) bool {
 func CreateUser(user modelRequest.SignUpRequest) (modelResponse.SignUpResponse, error) {
 	tx := pg.DB.Begin()
 
-	newUser := models.User{Email: user.Email, Password: helpers.HashPassword(user.Password), Username: user.Username}
+	newUser := models.User{Email: user.Email, Password: helpers.HashPassword(user.Password), Username: user.Username, Name: user.Name}
 
 	result := tx.Clauses(clause.Returning{Columns: []clause.Column{{Name: "id"}}}).Create(&newUser)
 
@@ -67,9 +67,9 @@ func GetUserByID(id uuid.UUID) (modelResponse.UserResponse, error) {
 	var user modelResponse.UserResponse
 
 	q := fmt.Sprintf(`
-  SELECT u.id, u.last_login_at, u.status, a.name "ApartmentName", a.address
+  SELECT u.id, u.last_login_at, u.status, u.name, u.email
   FROM users u
-  INNER JOIN apartments a ON a.user_id = u.id and u.id = '%s'`, id)
+  WHERE u.id = '%s'`, id)
 
 	err := pg.DB.Raw(q).Scan(&user)
 

@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	modelRequest "saarm/pkg/models/request"
 
 	"github.com/labstack/echo/v4"
@@ -38,6 +37,7 @@ func CreateUser(c echo.Context) error {
 		Username: u.Username,
 		Password: u.Password,
 		Email:    u.Email,
+		Name:     u.Name,
 	}
 
 	if user.Username == "" || user.Password == "" {
@@ -52,7 +52,6 @@ func CreateUser(c echo.Context) error {
 	userData, err := services.CreateUser(user)
 
 	if err != nil {
-		fmt.Println("SignUp ", err)
 		return utilities.R400(c, err.Error())
 	}
 

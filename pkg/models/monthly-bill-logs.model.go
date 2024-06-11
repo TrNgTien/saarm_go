@@ -13,9 +13,8 @@ type MonthlyBillLogs struct {
 	base.BaseModel
 	WaterNumber        string          `json:"waterNumber"`
 	ElectricityNumber  string          `json:"electricityNumber"`
-	IsSubmitted        bool            `json:"IsSubmitted" gorm:"default:true"`
-	WaterConsume       int           `json:"waterConsume"`
-	ElectricityConsume int           `json:"electricityConsume"`
+	WaterConsume       int             `json:"waterConsume"`
+	ElectricityConsume int             `json:"electricityConsume"`
 	ExtraFee           json.RawMessage `json:"extraFee" gorm:"type:jsonb"`
 	RoomID             uuid.UUID       `json:"roomID"`
 	Room               Room            `gorm:"foreignKey:RoomID"`

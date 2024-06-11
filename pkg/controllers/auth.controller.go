@@ -41,6 +41,7 @@ func SignUp(c echo.Context) error {
 		Username: u.Username,
 		Password: u.Password,
 		Email:    u.Email,
+		Name:     u.Name,
 	}
 
 	if user.Username == "" || user.Password == "" {

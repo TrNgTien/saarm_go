@@ -5,7 +5,7 @@ type (
 		Username string `json:"username"`
 		Password string `json:"password"`
 		Email    string `json:"email"`
-		Status   string `json:"status"`
+		Name     string `json:"name"`
 	}
 
 	SignInRequest struct {
@@ -16,6 +16,7 @@ type (
 	SignUpRequest struct {
 		Username string `json:"username"`
 		Password string `json:"password"`
+		Name     string `json:"name"`
 		Email    string `json:"email"`
 	}
 
@@ -23,6 +24,7 @@ type (
 		RoleName string `json:"roleName"`
 		Username string `json:"username"`
 		Password string `json:"password"`
+		Name     string `json:"name"`
 		Email    string `json:"email"`
 		Status   string `json:"status"`
 	}
