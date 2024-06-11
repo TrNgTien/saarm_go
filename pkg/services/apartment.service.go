@@ -38,13 +38,38 @@ func CreateApartments(apartment modelRequest.NewApartment) (modelReponses.Aparme
 	}, nil
 }
 
-func GetApartments(userID uuid.UUID) ([]modelReponses.AparmentResponse, error) {
+func GetApartments() ([]modelReponses.AparmentResponse, error) {
 	var apartments []modelReponses.AparmentResponse
 
-	q := fmt.Sprintf(`
-  SELECT a.id, a.name, a.address, a.total_room, a.room_available
-  FROM users u
-  INNER JOIN apartments a ON a.user_id = u.id and u.id = '%s'`, userID)
+	q := "SELECT a.id, a.name, a.address, a.total_room, a.room_available FROM  apartments a"
+
+	rows, err := pg.DB.Raw(q).Rows()
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var apartment modelReponses.AparmentResponse
+
+		err := rows.Scan(&apartment.ID, &apartment.Name, &apartment.Address, &apartment.TotalRoom, &apartment.RoomAvailable)
+
+		if err != nil {
+			return nil, err
+		}
+
+		apartments = append(apartments, apartment)
+	}
+	return apartments, nil
+
+}
+
+func GetApartmentsByUserID(userID uuid.UUID) ([]modelReponses.AparmentResponse, error) {
+	var apartments []modelReponses.AparmentResponse
+
+	q := fmt.Sprintf(`SELECT a.id, a.name, a.address, a.total_room, a.room_available
+  FROM apartments a WHERE a.user_id = '%s'`, userID)
 
 	rows, err := pg.DB.Raw(q).Rows()
 	if err != nil {

@@ -36,10 +36,20 @@ func CreateApartments(c echo.Context) error {
 }
 
 func GetApartments(c echo.Context) error {
-	userID := c.Get("userID").(string)
-	ID := utilities.ParseStringToUuid(userID)
+	apartments, err := services.GetApartments()
 
-	apartments, err := services.GetApartments(ID)
+	if err != nil {
+		return utilities.R400(c, err.Error())
+	}
+
+	return utilities.R200(c, apartments)
+}
+
+func GetApartmentsByUserID(c echo.Context) error {
+	ID := c.Param("id")
+	userID := utilities.ParseStringToUuid(ID)
+
+	apartments, err := services.GetApartmentsByUserID(userID)
 
 	if err != nil {
 		return utilities.R400(c, err.Error())

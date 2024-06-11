@@ -249,7 +249,7 @@ func ConfirmWaterMeter(roomID uuid.UUID, waterMeterNumber string) error {
 func GetHistorySubmitted(roomID uuid.UUID) ([]modelResponse.HistorySubmitResponse, error) {
 	var histories []modelResponse.HistorySubmitResponse
 
-	rows, err := pg.DB.Raw("select id, created_at, water_number, water_consume from monthly_bill_logs where room_id = ? ORDER BY created_at DESC LIMIT 50 OFFSET 0", roomID).Rows()
+	rows, err := pg.DB.Raw("SELECT id, created_at, water_number, water_consume from monthly_bill_logs where room_id = ? ORDER BY created_at DESC LIMIT 50 OFFSET 0", roomID).Rows()
 
 	if err != nil {
 		return nil, err
