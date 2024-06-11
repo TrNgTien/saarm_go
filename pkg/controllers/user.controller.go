@@ -1,9 +1,11 @@
 package controllers
 
 import (
+	"fmt"
 	modelRequest "saarm/pkg/models/request"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 
 	"saarm/pkg/services"
 	"saarm/pkg/utilities"
@@ -27,7 +29,34 @@ func GetUserByID(c echo.Context) error {
 }
 
 func CreateUser(c echo.Context) error {
-	return utilities.R200(c, "rs")
+	u := new(modelRequest.NewUser)
+	if err := c.Bind(u); err != nil {
+		return utilities.R400(c, err.Error())
+	}
+
+	user := modelRequest.SignUpRequest{
+		Username: u.Username,
+		Password: u.Password,
+		Email:    u.Email,
+	}
+
+	if user.Username == "" || user.Password == "" {
+		return utilities.R400(c, "[SignUp] | Missing username or password!")
+	}
+
+	if services.IsExistedUser(user) {
+		log.Error("[SignUp] | User has already exsited!")
+		return utilities.R400(c, "[SignUp] | User has already exsited!")
+	}
+
+	userData, err := services.CreateUser(user)
+
+	if err != nil {
+		fmt.Println("SignUp ", err)
+		return utilities.R400(c, err.Error())
+	}
+
+	return utilities.R200(c, userData)
 }
 
 func UpdateUser(c echo.Context) error {

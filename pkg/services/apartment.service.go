@@ -69,7 +69,7 @@ func GetApartmentsByUserID(userID uuid.UUID) ([]modelReponses.AparmentResponse, 
 	var apartments []modelReponses.AparmentResponse
 
 	q := fmt.Sprintf(`SELECT a.id, a.name, a.address, a.total_room, a.room_available
-  FROM apartments a WHERE a.user_id = '%s'`, userID)
+  FROM apartments a WHERE a.user_id = '%s' ORDER BY a.created_at asc`, userID)
 
 	rows, err := pg.DB.Raw(q).Rows()
 	if err != nil {
