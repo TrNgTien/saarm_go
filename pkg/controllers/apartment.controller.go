@@ -70,6 +70,18 @@ func GetApartmentByID(c echo.Context) error {
 	return utilities.R200(c, apartment)
 }
 
+func GetRoomsByApartmentID(c echo.Context) error {
+	ID := c.Param("id")
+	apartmentId := utilities.ParseStringToUuid(ID)
+	apartment, err := services.GetRoomsByApartmentID(apartmentId)
+
+	if err != nil {
+		return utilities.R400(c, "[GetAparments] Cannot get apartment!")
+	}
+
+	return utilities.R200(c, apartment)
+}
+
 func PutApartmentByID(c echo.Context) error {
 	return c.JSON(200, echo.Map{
 		"success": true,

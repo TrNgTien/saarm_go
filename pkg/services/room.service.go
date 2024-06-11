@@ -17,6 +17,13 @@ import (
 	"github.com/google/uuid"
 )
 
+func IsExistedRoomAccount(user modelRequest.NewRoom) bool {
+	var count int
+	pg.DB.Raw("select count(*) from rooms where username = ?", user.Username).Scan(&count)
+
+	return count > 0
+}
+
 func saveFileSystem(file, roomID string, fileChan chan string) {
 	baseData := file[strings.IndexByte(file, ',')+1:]
 	var outputFileName string
@@ -73,8 +80,6 @@ func DetectWaterMeter(file common.UploadWaterMeter, roomID string) ([]string, er
 
 	fileCropped, fileOriginal := <-fileChan, <-fileChan
 
-	close(fileChan)
-
 	IMAGE_WATER_METER_PATH := utilities.GetFilePath(common.WATER_METER_PATH, fileCropped)
 	ORIGINAL_WATER_METER_PATH := utilities.GetFilePath(common.WATER_METER_PATH, fileOriginal)
 
@@ -113,7 +118,7 @@ func CreateRoom(room modelRequest.NewRoom) (modelResponse.RoomResponse, error) {
 		Username:      room.Username,
 		RoomPrice:     room.RoomPrice,
 		MaxPeople:     room.MaxPeople,
-		CurrentPeople: 0,
+		CurrentPeople: room.CurrentPeople,
 		ApartmentID:   room.ApartmentID,
 	}
 

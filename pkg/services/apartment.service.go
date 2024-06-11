@@ -93,6 +93,34 @@ func GetApartmentsByUserID(userID uuid.UUID) ([]modelReponses.AparmentResponse, 
 
 }
 
+func GetRoomsByApartmentID(id uuid.UUID) ([]modelReponses.RoomsResponseByApartment, error) {
+	var roomsByApartment []modelReponses.RoomsResponseByApartment
+
+	q := "SELECT r.id, r.name, r.status, r.room_price, r.max_people, r.current_people FROM rooms r INNER JOIN apartments a ON r.apartment_id = a.id AND a.id = ? ORDER BY r.name ASC"
+
+	rows, err := pg.DB.Raw(q, id).Rows()
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var room modelReponses.RoomsResponseByApartment
+
+		err := rows.Scan(&room.ID, &room.Name, &room.Status, &room.RoomPrice, &room.MaxPeople, &room.CurrentPeople)
+
+		if err != nil {
+			return nil, err
+		}
+
+		roomsByApartment = append(roomsByApartment, room)
+	}
+
+	return roomsByApartment, nil
+}
+
 func GetApartmentByID(id uuid.UUID) (modelReponses.AparmentResponse, error) {
 	var apartment modelReponses.AparmentResponse
 
