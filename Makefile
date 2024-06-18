@@ -1,5 +1,5 @@
 .PHONY: build
-run:
+build:
 	go build -o cmd/main.go
 
 .PHONY: run
