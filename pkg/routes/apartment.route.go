@@ -16,6 +16,8 @@ func ApartmentRoutes(g *echo.Group) {
 	aGroup.GET("/:id", controllers.GetApartmentByID)
   aGroup.GET("/:id/rooms", controllers.GetRoomsByApartmentID)
 
+	aGroup.GET("/bills", controllers.GetApartments)
+
 	aGroup.POST("", controllers.CreateApartments)
 
 	aGroup.PATCH("/:id", controllers.PatchApartmentByID)
