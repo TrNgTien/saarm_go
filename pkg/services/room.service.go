@@ -17,6 +17,13 @@ import (
 	"github.com/google/uuid"
 )
 
+func IsExistedRoomAccount(user modelRequest.NewRoom) bool {
+	var count int
+	pg.DB.Raw("select count(*) from rooms where username = ?", user.Username).Scan(&count)
+
+	return count > 0
+}
+
 func saveFileSystem(file, roomID string, fileChan chan string) {
 	baseData := file[strings.IndexByte(file, ',')+1:]
 	var outputFileName string
@@ -28,6 +35,7 @@ func saveFileSystem(file, roomID string, fileChan chan string) {
 	}
 
 	parts := strings.SplitN(file, ";", 2)
+
 	var fileType string
 
 	if len(parts) != 2 {
@@ -110,7 +118,7 @@ func CreateRoom(room modelRequest.NewRoom) (modelResponse.RoomResponse, error) {
 		Username:      room.Username,
 		RoomPrice:     room.RoomPrice,
 		MaxPeople:     room.MaxPeople,
-		CurrentPeople: 0,
+		CurrentPeople: room.CurrentPeople,
 		ApartmentID:   room.ApartmentID,
 	}
 
@@ -126,14 +134,13 @@ func CreateRoom(room modelRequest.NewRoom) (modelResponse.RoomResponse, error) {
 }
 
 func GetRooms() error {
-
 	return nil
 }
 
 func GetRoomByID(roomID uuid.UUID) (modelResponse.RoomResponse, error) {
 	var room modelResponse.RoomResponse
 
-	err := pg.DB.Raw("SELECT r.id, r.name, r.room_price, r.status, a.name \"apartmentName\", a.address FROM rooms r INNER JOIN apartments a ON a.id = r.apartment_id AND r.id = ?", roomID).Scan(&room)
+	err := pg.DB.Raw("SELECT r.id, r.name, r.room_price, r.status, a.name \"ApartmentName\", a.address FROM rooms r INNER JOIN apartments a ON a.id = r.apartment_id AND r.id = ?", roomID).Scan(&room)
 
 	if err.Error != nil {
 		return modelResponse.RoomResponse{}, err.Error
@@ -145,16 +152,15 @@ func GetRoomByID(roomID uuid.UUID) (modelResponse.RoomResponse, error) {
 func GetBillByRoom(roomID uuid.UUID, monthReq string) (modelResponse.BillByRoomResponse, error) {
 	var billRoom modelResponse.BillByRoomResponse
 
-	query := fmt.Sprintf(`SELECT m.id, m.created_at, water_consume, electricity_consume, extra_fee, r.room_price
-     FROM monthly_bill_logs as m 
+	q := fmt.Sprintf(`SELECT m.id, m.created_at, water_consume, electricity_consume, extra_fee, r.room_price
+     FROM monthly_bill_logs as m
      INNER JOIN rooms as r on r.id = m.room_id AND m.room_id = '%s'
      AND m.created_at >= date_trunc('month', timestamp with time zone '%s')
      AND m.created_at < date_trunc('month', timestamp with time zone '%s' + interval '1 month')
-     LIMIT 1
-  `,
+     LIMIT 1`,
 		roomID, monthReq, monthReq)
 
-	err := pg.DB.Raw(query).Scan(&billRoom)
+	err := pg.DB.Raw(q).Scan(&billRoom)
 
 	if err.Error != nil {
 		return modelResponse.BillByRoomResponse{}, err.Error
@@ -248,7 +254,7 @@ func ConfirmWaterMeter(roomID uuid.UUID, waterMeterNumber string) error {
 func GetHistorySubmitted(roomID uuid.UUID) ([]modelResponse.HistorySubmitResponse, error) {
 	var histories []modelResponse.HistorySubmitResponse
 
-	rows, err := pg.DB.Raw("select id, created_at, water_number, water_consume from monthly_bill_logs where room_id = ? ORDER BY created_at DESC LIMIT 50 OFFSET 0", roomID).Rows()
+	rows, err := pg.DB.Raw("SELECT id, created_at, water_number, water_consume from monthly_bill_logs where room_id = ? ORDER BY created_at DESC LIMIT 50 OFFSET 0", roomID).Rows()
 
 	if err != nil {
 		return nil, err

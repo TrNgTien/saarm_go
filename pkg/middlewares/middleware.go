@@ -25,11 +25,11 @@ func AdminPermission(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-func LandlordPermission(next echo.HandlerFunc) echo.HandlerFunc {
+func HomeownerPermission(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		role := c.Get("role").(string)
 
-		allowRoles := append(common.FixedAllowedRoles, common.LANDLORD_ROLE)
+		allowRoles := append(common.FixedAllowedRoles, common.HOMEOWNER_ROLE)
 
 		if !VerifyByRole(allowRoles, role) {
 			return utilities.R403(c)

@@ -16,14 +16,14 @@ func RoomGroupRoutes(g *echo.Group) {
 	rGroup.GET("/:id/bills", controllers.GetBillByRoom)
 	rGroup.GET("/:id/water-meters/histories", controllers.GetHistorySubmitted)
 	rGroup.GET("/:id/water-meters/is-submitted", controllers.CheckSubmittedWaterMeter)
+
+  rGroup.POST("", controllers.CreateRoom, middlewares.HomeownerPermission)
+  rGroup.POST("/:id/duplicate", controllers.DuplicateRoom, middlewares.HomeownerPermission)
 	rGroup.POST("/:id/water-meters/detect", controllers.DetectWaterMeter)
 	rGroup.POST("/:id/water-meters/submit", controllers.ConfirmWaterMeter)
 
-	rGroup.POST("", controllers.CreateRoom, middlewares.LandlordPermission)
-	rGroup.POST("/:id/duplicate", controllers.DuplicateRoom, middlewares.LandlordPermission)
-
-	rGroup.PATCH("/:id", controllers.PatchRoomByID, middlewares.LandlordPermission)
-	rGroup.PUT("/:id", controllers.PutRoomByID, middlewares.LandlordPermission)
-	rGroup.DELETE("", controllers.DeleteRooms, middlewares.LandlordPermission)
-	rGroup.DELETE("/:id", controllers.DeleteRoomByID, middlewares.LandlordPermission)
+	rGroup.PATCH("/:id", controllers.PatchRoomByID, middlewares.HomeownerPermission)
+	rGroup.PUT("/:id", controllers.PutRoomByID, middlewares.HomeownerPermission)
+	rGroup.DELETE("", controllers.DeleteRooms, middlewares.HomeownerPermission)
+	rGroup.DELETE("/:id", controllers.DeleteRoomByID, middlewares.HomeownerPermission)
 }

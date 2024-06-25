@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"fmt"
-	"saarm/pkg/common"
 	modelRequests "saarm/pkg/models/request"
 	"saarm/pkg/services"
 	"saarm/pkg/utilities"
@@ -17,7 +15,7 @@ func CreateApartments(c echo.Context) error {
 		return utilities.R400(c, err.Error())
 	}
 
-  userID := c.Get("userID").(string)
+	userID := c.Get("userID").(string)
 
 	apartment := modelRequests.NewApartment{
 		Name:          a.Name,
@@ -25,7 +23,7 @@ func CreateApartments(c echo.Context) error {
 		Address:       a.Address,
 		TotalRoom:     a.TotalRoom,
 		RoomAvailable: a.RoomAvailable,
-    UserID: utilities.ParseStringToUuid(userID),
+		UserID:        utilities.ParseStringToUuid(userID),
 	}
 
 	apartmentCreated, err := services.CreateApartments(apartment)
@@ -38,40 +36,23 @@ func CreateApartments(c echo.Context) error {
 }
 
 func GetApartments(c echo.Context) error {
-	limit, offset, page := c.QueryParam("limit"), c.QueryParam("offset"), c.QueryParam("page")
-	if limit == "" || offset == "" || page == "" {
-		return utilities.R400(c, "[GetAparments] TODO Paging!")
-	}
-
-	limitInt, err := utilities.GetIntValue(limit)
+	apartments, err := services.GetApartments()
 
 	if err != nil {
-		return err
+		return utilities.R400(c, err.Error())
 	}
 
-	offsetInt, err := utilities.GetIntValue(offset)
+	return utilities.R200(c, apartments)
+}
+
+func GetApartmentsByUserID(c echo.Context) error {
+	ID := c.Param("id")
+	userID := utilities.ParseStringToUuid(ID)
+
+	apartments, err := services.GetApartmentsByUserID(userID)
 
 	if err != nil {
-		return err
-	}
-
-	pageInt, err := utilities.GetIntValue(page)
-
-	if err != nil {
-		return err
-	}
-
-	queryData := common.PaginationQuery{
-		Limit:  limitInt,
-		Offset: offsetInt,
-		Page:   pageInt,
-	}
-
-	fmt.Println("[GetAparments] runign here")
-	apartments, err := services.GetApartments(queryData)
-
-	if err != nil {
-		return utilities.R400(c, "[GetAparments] Cannot get apartments!")
+		return utilities.R400(c, err.Error())
 	}
 
 	return utilities.R200(c, apartments)
@@ -80,7 +61,19 @@ func GetApartments(c echo.Context) error {
 func GetApartmentByID(c echo.Context) error {
 	ID := c.Param("id")
 	apartmentId := utilities.ParseStringToUuid(ID)
-	apartment, err := services.GetAparmentByID(apartmentId)
+	apartment, err := services.GetApartmentByID(apartmentId)
+
+	if err != nil {
+		return utilities.R400(c, "[GetAparments] Cannot get apartment!")
+	}
+
+	return utilities.R200(c, apartment)
+}
+
+func GetRoomsByApartmentID(c echo.Context) error {
+	ID := c.Param("id")
+	apartmentId := utilities.ParseStringToUuid(ID)
+	apartment, err := services.GetRoomsByApartmentID(apartmentId)
 
 	if err != nil {
 		return utilities.R400(c, "[GetAparments] Cannot get apartment!")

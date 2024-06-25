@@ -17,7 +17,7 @@ const (
 	SUPER_ADMIN_ROLE = "superadmin"
 	ADMIN_ROLE       = "admin"
 	GUEST_ROLE       = "guest"
-	LANDLORD_ROLE    = "landlord"
+	HOMEOWNER_ROLE    = "homeowner"
 	TENANT_ROLE    = "tenant"
 )
 

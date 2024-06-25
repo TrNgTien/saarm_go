@@ -64,3 +64,26 @@ services:
       - /opt/google-cloud/service-account.json:/opt/google-cloud/service-account.json
     networks:
       - saarm-network
+  saarm_go_2:
+    image: "golang:1.21.5-alpine"
+    container_name: saarm_go_2
+    working_dir: /app
+    entrypoint: ["sh", "./start.sh"]
+    restart: always
+    ports:
+      - 8001:8000
+    environment:
+      - APP_ENV_POSTGRESQL_HOST=${APP_ENV_POSTGRESQL_HOST}
+      - APP_ENV_SECRET_KEY=${APP_ENV_SECRET_KEY}
+      - APP_ENV_POSTGRESQL_PORT=${APP_ENV_POSTGRESQL_PORT}
+      - APP_ENV_POSTGRESQL_USERNAME=${APP_ENV_POSTGRESQL_USERNAME}
+      - APP_ENV_POSTGRESQL_PASSWORD=${APP_ENV_POSTGRESQL_PASSWORD}
+      - APP_ENV_POSTGRESQL_DATABASE=${APP_ENV_POSTGRESQL_DATABASE}
+      - APP_ENV_MINIO_ENDPOINT=${APP_ENV_MINIO_ENDPOINT}
+      - APP_ENV_MINIO_ACCESS_KEY=${APP_ENV_MINIO_ACCESS_KEY}
+      - APP_ENV_MINIO_SECRET_KEY=${APP_ENV_MINIO_SECRET_KEY}
+    volumes:
+      - .:/app
+      - /opt/google-cloud/service-account.json:/opt/google-cloud/service-account.json
+    networks:
+      - saarm-network

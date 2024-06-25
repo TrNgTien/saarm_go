@@ -4,6 +4,7 @@ import (
 	modelRequest "saarm/pkg/models/request"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 
 	"saarm/pkg/services"
 	"saarm/pkg/utilities"
@@ -15,20 +16,46 @@ func GetUsers(c echo.Context) error {
 
 func GetUserByID(c echo.Context) error {
 	id := c.Param("id")
-	i, err := utilities.GetIntValue(id)
+	userID := utilities.ParseStringToUuid(id)
+
+	user, err := services.GetUserByID(userID)
+
 	if err != nil {
-
 		return utilities.R400(c, err.Error())
-
 	}
 
-	rs := services.GetUserByID(i)
-
-	return utilities.R200(c, rs)
+	return utilities.R200(c, user)
 }
 
 func CreateUser(c echo.Context) error {
-	return utilities.R200(c, "rs")
+	u := new(modelRequest.NewUser)
+	if err := c.Bind(u); err != nil {
+		return utilities.R400(c, err.Error())
+	}
+
+	user := modelRequest.SignUpRequest{
+		Username: u.Username,
+		Password: u.Password,
+		Email:    u.Email,
+		Name:     u.Name,
+	}
+
+	if user.Username == "" || user.Password == "" {
+		return utilities.R400(c, "[SignUp] | Missing username or password!")
+	}
+
+	if services.IsExistedUser(user) {
+		log.Error("[SignUp] | User has already exsited!")
+		return utilities.R400(c, "[SignUp] | User has already exsited!")
+	}
+
+	userData, err := services.CreateUser(user)
+
+	if err != nil {
+		return utilities.R400(c, err.Error())
+	}
+
+	return utilities.R200(c, userData)
 }
 
 func UpdateUser(c echo.Context) error {

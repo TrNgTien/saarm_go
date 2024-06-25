@@ -8,10 +8,11 @@ import (
 
 type (
 	UserResponse struct {
-		ID          uuid.UUID `gorm:"type:uuid;default:gen_random_uuid()"`
+		ID          uuid.UUID `json:"id" gorm:"type:uuid;default:gen_random_uuid()"`
 		Email       string    `json:"email"`
+		Name        string    `json:"name"`
 		Status      string    `json:"status" gorm:"type:string;default:100_ACTIVATED"`
-		ApartmentID uuid.UUID `json:"apartmentID"`
+		LastLoginAt string    `json:"lastLoginAt"`
 	}
 
 	AuthResponse struct {

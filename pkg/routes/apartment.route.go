@@ -9,10 +9,14 @@ import (
 )
 
 func ApartmentRoutes(g *echo.Group) {
-	aGroup := g.Group(common.APARTMENT_PATH, middlewares.LandlordPermission)
+	aGroup := g.Group(common.APARTMENT_PATH, middlewares.HomeownerPermission)
 
 	aGroup.GET("", controllers.GetApartments)
+  aGroup.GET("/users/:id", controllers.GetApartmentsByUserID)
 	aGroup.GET("/:id", controllers.GetApartmentByID)
+  aGroup.GET("/:id/rooms", controllers.GetRoomsByApartmentID)
+
+	aGroup.GET("/bills", controllers.GetApartments)
 
 	aGroup.POST("", controllers.CreateApartments)
 

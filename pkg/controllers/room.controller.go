@@ -8,6 +8,7 @@ import (
 	"saarm/pkg/utilities"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 )
 
 func CreateRoom(c echo.Context) error {
@@ -17,6 +18,7 @@ func CreateRoom(c echo.Context) error {
 		return utilities.R400(c, err.Error())
 	}
 
+	fmt.Println("[CreateRoom]", r.CurrentPeople)
 	room := modelRequest.NewRoom{
 		Username:      r.Username,
 		Password:      r.Password,
@@ -30,6 +32,11 @@ func CreateRoom(c echo.Context) error {
 
 	if room.Username == "" || room.Password == "" {
 		return utilities.R400(c, "[CreateRoom] | Missing username or password!")
+	}
+
+	if services.IsExistedRoomAccount(room) {
+		log.Error("[CreateRoom] | Room Account has already exsited!")
+		return utilities.R400(c, "Tài khoản đã tồn tại!")
 	}
 
 	roomCreated, err := services.CreateRoom(room)
@@ -106,7 +113,7 @@ func DetectWaterMeter(c echo.Context) error {
 func GetBillByRoom(c echo.Context) error {
 	ID := c.Param("id")
 	roomID := utilities.ParseStringToUuid(ID)
-  monthRequest := c.QueryParam("monthRequest")
+	monthRequest := c.QueryParam("monthRequest")
 
 	data, err := services.GetBillByRoom(roomID, monthRequest)
 

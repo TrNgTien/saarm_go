@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"saarm/modules/pg"
 	"saarm/pkg/helpers"
 	modelRequest "saarm/pkg/models/request"
@@ -27,7 +28,7 @@ func IsExistedUser(user modelRequest.SignUpRequest) bool {
 func CreateUser(user modelRequest.SignUpRequest) (modelResponse.SignUpResponse, error) {
 	tx := pg.DB.Begin()
 
-	newUser := models.User{Email: user.Email, Password: helpers.HashPassword(user.Password), Username: user.Username}
+	newUser := models.User{Email: user.Email, Password: helpers.HashPassword(user.Password), Username: user.Username, Name: user.Name}
 
 	result := tx.Clauses(clause.Returning{Columns: []clause.Column{{Name: "id"}}}).Create(&newUser)
 
@@ -61,9 +62,22 @@ func GetUsers(c echo.Context) error {
 	return utilities.R200(c, "users")
 }
 
-func GetUserByID(id int) error {
-	return nil
-	// return repositories.UserRepo(pg.DB).FindUserByID(id)
+func GetUserByID(id uuid.UUID) (modelResponse.UserResponse, error) {
+
+	var user modelResponse.UserResponse
+
+	q := fmt.Sprintf(`
+  SELECT u.id, u.last_login_at, u.status, u.name, u.email
+  FROM users u
+  WHERE u.id = '%s'`, id)
+
+	err := pg.DB.Raw(q).Scan(&user)
+
+	if err.Error != nil {
+		return modelResponse.UserResponse{}, err.Error
+	}
+
+	return user, nil
 }
 
 func PatchUser(userID uuid.UUID, req modelRequest.UpdateUserRequest) error {
