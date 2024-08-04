@@ -1,5 +1,5 @@
-# System Overview
+# Overview system design:
 
-<img width="937" alt="System Overview" loading="lazy" src="https://github.com/TrNgTien/saarm_go/assets/66483590/8ff2d44c-0765-4e02-a06f-5dea87cf1ae7">
+![Thesis System overview_slide](https://github.com/user-attachments/assets/4c142d1d-a3f5-4949-9815-cb57cb8f0884)
 
 
