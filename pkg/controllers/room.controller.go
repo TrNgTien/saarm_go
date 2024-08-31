@@ -18,16 +18,18 @@ func CreateRoom(c echo.Context) error {
 		return utilities.R400(c, err.Error())
 	}
 
-	fmt.Println("[CreateRoom]", r.CurrentPeople)
 	room := modelRequest.NewRoom{
-		Username:      r.Username,
-		Password:      r.Password,
-		Status:        r.Status,
-		Name:          r.Name,
-		RoomPrice:     r.RoomPrice,
-		MaxPeople:     r.MaxPeople,
-		CurrentPeople: r.CurrentPeople,
-		ApartmentID:   r.ApartmentID,
+		Username:              r.Username,
+		Password:              r.Password,
+		Status:                r.Status,
+		Name:                  r.Name,
+		RoomPrice:             r.RoomPrice,
+		MaxPeople:             r.MaxPeople,
+		CurrentPeople:         r.CurrentPeople,
+		ApartmentID:           r.ApartmentID,
+		WaterNumberInit:       r.WaterNumberInit,
+		ElectricityNumberInit: r.ElectricityNumberInit,
+		ExtraFee:              r.ExtraFee,
 	}
 
 	if room.Username == "" || room.Password == "" {

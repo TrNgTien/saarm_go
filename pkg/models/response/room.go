@@ -1,6 +1,7 @@
 package modelResponse
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/google/uuid"
@@ -28,11 +29,11 @@ type (
 	}
 
 	BillByRoomResponse struct {
-		ID                 uuid.UUID `json:"id"`
-		CreatedAt          time.Time `json:"createdAt"`
-		WaterConsume       string    `json:"waterConsume"`
-		ElectricityConsume string    `json:"electricityConsume"`
-		ExtraFee           string    `json:"extraFee"`
-		RoomPrice          string    `json:"roomPrice"`
+		ID                 uuid.UUID       `json:"id"`
+		CreatedAt          time.Time       `json:"createdAt"`
+		WaterConsume       string          `json:"waterConsume"`
+		ElectricityConsume string          `json:"electricityConsume"`
+		ExtraFee           json.RawMessage `json:"extraFee"`
+		RoomPrice          string          `json:"roomPrice"`
 	}
 )

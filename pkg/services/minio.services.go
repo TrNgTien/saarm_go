@@ -21,11 +21,11 @@ func IsExistedBucket(bucketName string) (bool, error) {
 	return isExisted, nil
 }
 
-func getFileExtension(filename string) string {
+func GetFileExtension(filename string) string {
 	return filepath.Ext(filename)[1:]
 }
 
-func generateRandomString(n int) string {
+func GenerateRandomString(n int) string {
 	// Use a more secure random number generator in production
 	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 	s := make([]rune, n)
@@ -83,6 +83,6 @@ func UploadObject(bucketName string, objectName string, filePath string) (int64,
 }
 
 func UploadObjectV2(bucketName string, objectName string, filePath string) error {
-  //TODO: implement with minio
+	//TODO: implement with minio
 	return nil
 }
