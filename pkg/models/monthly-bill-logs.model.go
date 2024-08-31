@@ -1,7 +1,6 @@
 package models
 
 import (
-	"encoding/json"
 	"saarm/pkg/base"
 	"time"
 
@@ -11,13 +10,12 @@ import (
 
 type MonthlyBillLogs struct {
 	base.BaseModel
-	WaterNumber        string          `json:"waterNumber"`
-	ElectricityNumber  string          `json:"electricityNumber"`
-	WaterConsume       int             `json:"waterConsume"`
-	ElectricityConsume int             `json:"electricityConsume"`
-	ExtraFee           json.RawMessage `json:"extraFee" gorm:"type:jsonb"`
-	RoomID             uuid.UUID       `json:"roomID"`
-	Room               Room            `gorm:"foreignKey:RoomID"`
+	WaterNumber        string    `json:"waterNumber"`
+	ElectricityNumber  string    `json:"electricityNumber"`
+	WaterConsume       int       `json:"waterConsume"`
+	ElectricityConsume int       `json:"electricityConsume"`
+	RoomID             uuid.UUID `json:"roomID"`
+	Room               Room      `gorm:"foreignKey:RoomID"`
 }
 
 func (m *MonthlyBillLogs) BeforeCreate(tx *gorm.DB) (err error) {

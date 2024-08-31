@@ -2,6 +2,7 @@ package services
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"os"
 	"saarm/modules/pg"
@@ -113,13 +114,16 @@ func CreateRoom(room modelRequest.NewRoom) (modelResponse.RoomResponse, error) {
 	tx := pg.DB.Begin()
 
 	newRoom := models.Room{
-		Name:          room.Name,
-		Password:      helpers.HashPassword(room.Password),
-		Username:      room.Username,
-		RoomPrice:     room.RoomPrice,
-		MaxPeople:     room.MaxPeople,
-		CurrentPeople: room.CurrentPeople,
-		ApartmentID:   room.ApartmentID,
+		Name:                  room.Name,
+		Password:              helpers.HashPassword(room.Password),
+		Username:              room.Username,
+		RoomPrice:             room.RoomPrice,
+		MaxPeople:             room.MaxPeople,
+		CurrentPeople:         room.CurrentPeople,
+		ApartmentID:           room.ApartmentID,
+		WaterNumberInit:       room.WaterNumberInit,
+		ElectricityNumberInit: room.ElectricityNumberInit,
+		ExtraFee:              json.RawMessage(room.ExtraFee),
 	}
 
 	newRoomErr := tx.Create(&newRoom).Error
@@ -152,7 +156,7 @@ func GetRoomByID(roomID uuid.UUID) (modelResponse.RoomResponse, error) {
 func GetBillByRoom(roomID uuid.UUID, monthReq string) (modelResponse.BillByRoomResponse, error) {
 	var billRoom modelResponse.BillByRoomResponse
 
-	q := fmt.Sprintf(`SELECT m.id, m.created_at, water_consume, electricity_consume, extra_fee, r.room_price
+	q := fmt.Sprintf(`SELECT m.id, m.created_at, water_consume, electricity_consume, r.extra_fee, r.room_price
      FROM monthly_bill_logs as m
      INNER JOIN rooms as r on r.id = m.room_id AND m.room_id = '%s'
      AND m.created_at >= date_trunc('month', timestamp with time zone '%s')
@@ -206,7 +210,6 @@ func CheckSubmittedWaterMeter(roomID uuid.UUID) (bool, error) {
 
 func ConfirmWaterMeter(roomID uuid.UUID, waterMeterNumber string) error {
 	var waterNumberLatest string
-
 	err := pg.DB.Raw("SELECT water_number from monthly_bill_logs WHERE room_id = ? ORDER BY created_at DESC LIMIT 1", roomID).Scan(&waterNumberLatest).Error
 
 	if err != nil {
@@ -218,18 +221,24 @@ func ConfirmWaterMeter(roomID uuid.UUID, waterMeterNumber string) error {
 
 	if waterNumberLatest != "" {
 		oldWater = waterNumberLatest[:4]
+	} else {
+		// Fetch the initial water meter value if no previous records
+		var room models.Room
+		err := pg.DB.Raw("SELECT water_number_init FROM rooms WHERE id = ?", roomID).Scan(&room).Error
+		if err != nil {
+			return err
+		}
+		oldWater = room.WaterNumberInit[:4]
 	}
 
 	newWater := waterMeterNumber[:4]
 
 	oldWaterMeter, err := utilities.GetIntValue(oldWater)
-
 	if err != nil {
 		return err
 	}
 
 	newWaterMeter, err := utilities.GetIntValue(newWater)
-
 	if err != nil {
 		return err
 	}
@@ -243,7 +252,6 @@ func ConfirmWaterMeter(roomID uuid.UUID, waterMeterNumber string) error {
 	}
 
 	monthlyLogErr := pg.DB.Create(&monthlyLogs).Error
-
 	if monthlyLogErr != nil {
 		return monthlyLogErr
 	}

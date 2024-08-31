@@ -1,4 +1,5 @@
 volumes
+.idea
 # Build artifacts
 *.a        # Object files
 *.so        # Shared libraries (dynamically linked)

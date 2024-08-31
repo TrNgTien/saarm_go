@@ -17,8 +17,8 @@ func RoomGroupRoutes(g *echo.Group) {
 	rGroup.GET("/:id/water-meters/histories", controllers.GetHistorySubmitted)
 	rGroup.GET("/:id/water-meters/is-submitted", controllers.CheckSubmittedWaterMeter)
 
-  rGroup.POST("", controllers.CreateRoom, middlewares.HomeownerPermission)
-  rGroup.POST("/:id/duplicate", controllers.DuplicateRoom, middlewares.HomeownerPermission)
+	rGroup.POST("", controllers.CreateRoom, middlewares.HomeownerPermission)
+	rGroup.POST("/:id/duplicate", controllers.DuplicateRoom, middlewares.HomeownerPermission)
 	rGroup.POST("/:id/water-meters/detect", controllers.DetectWaterMeter)
 	rGroup.POST("/:id/water-meters/submit", controllers.ConfirmWaterMeter)
 
